@@ -1,0 +1,26 @@
+{
+  "name": "@handy/kit",
+  "version": "1.0.0",
+  "description": "A collection of handy CLI tools (license-gen, git-standup).",
+  "main": "dist/bin/handy-kit.js",
+  "bin": {
+    "handy-kit": "dist/bin/handy-kit.js"
+  },
+  "keywords": [
+    "cli",
+    "license",
+    "git",
+    "standup"
+  ],
+  "author": "Naveen R",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "@types/node": "^22.5.0"
+  }
+}
