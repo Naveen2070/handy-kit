@@ -1,50 +1,51 @@
-#!/usr/bin/env node
-import { licenseGen } from "../lib/license-gen.js";
 import { gitStandup } from "../lib/git-standup.js";
+import { licenseGen } from "../lib/license-gen.js";
+import { parseArgs } from "../lib/utils/args.js";
+import { printTemplate } from "../lib/utils/templates.js";
+const commands = [
+    {
+        name: "license-gen",
+        description: "Generate an open-source license",
+        usage: "license-gen <type> --author <name>",
+        run: (args, flags) => {
+            const type = args[0];
+            const author = flags["author"];
+            if (!type || !author) {
+                printTemplate("errors.missingLicenseArgs");
+                process.exit(1);
+            }
+            console.log(licenseGen(type, author));
+        },
+    },
+    {
+        name: "git-standup",
+        description: "Show git commits from last n days",
+        usage: "git-standup --days <n>",
+        run: (_, flags) => {
+            const days = parseInt(flags["days"] || "0", 10);
+            if (!days || days < 1) {
+                printTemplate("errors.invalidDays");
+                process.exit(1);
+            }
+            gitStandup(days);
+        },
+    },
+];
+// -------------------- CLI START --------------------
 const args = process.argv.slice(2);
-if (args.length === 0) {
-    console.log(`
-Usage: handy-kit <command> [options]
-
-Commands:
-  license-gen <type> --author "Name"   Generate an open-source license
-  git-standup --days <n>              Show git commits from last n days
-  `);
+if (args.length === 0 || ["-h", "--help"].includes(args[0])) {
+    printTemplate("help.main", { commands });
     process.exit(0);
 }
-const [command, ...rest] = args;
-switch (command) {
-    case "license-gen": {
-        if (rest.length < 2) {
-            console.error("❌ Missing required arguments: <type> --author <name>");
-            process.exit(1);
-        }
-        const type = rest[0];
-        const authorIndex = rest.indexOf("--author");
-        if (authorIndex === -1) {
-            console.error("❌ Missing required argument: --author <name>");
-            process.exit(1);
-        }
-        const author = rest[authorIndex + 1];
-        console.log(licenseGen(type, author));
-        break;
-    }
-    case "git-standup": {
-        const daysIndex = rest.indexOf("--days");
-        if (daysIndex === -1) {
-            console.error("❌ Missing required argument: --days <n>");
-            process.exit(1);
-        }
-        const days = parseInt(rest[daysIndex + 1], 10);
-        if (isNaN(days) || days < 1) {
-            console.error("❌ Invalid argument: --days <n> must be a positive integer");
-            process.exit(1);
-        }
-        gitStandup(days);
-        break;
-    }
-    default:
-        console.error(`❌ Unknown command: ${command}`);
-        process.exit(1);
+const [commandName, ...rest] = args;
+const command = commands.find((c) => c.name === commandName);
+if (!command) {
+    printTemplate("errors.unknownCommand", {
+        command: commandName,
+        commands,
+    });
+    process.exit(1);
 }
+const { positional, flags } = parseArgs(rest);
+command.run(positional, flags);
 //# sourceMappingURL=handy-kit.js.map

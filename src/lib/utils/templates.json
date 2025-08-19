@@ -1,0 +1,10 @@
+{
+  "help": {
+    "main": "Usage: handy-kit <command> [options]\n\nCommands:\n  license-gen <type> --author \"Name\"   Generate an open-source license\n  git-standup --days <n>              Show git commits from last n days"
+  },
+  "errors": {
+    "unknownCommand": "❌ Unknown command: {{command}}\n\nUsage: handy-kit <command> [options]\n\nCommands:\n{{commands}}",
+    "missingLicenseArgs": "❌ Missing required arguments for license-gen: <type> --author <name>",
+    "invalidDays": "❌ Invalid argument: --days <n> must be a positive integer"
+  }
+}
