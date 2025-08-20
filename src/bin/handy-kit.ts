@@ -11,25 +11,66 @@ const commands: Command[] = [
     usage: "license-gen <type> --author <name>",
     run: (args, flags) => {
       const type = args[0];
-      const author = flags["author"];
+      const author = flags["author"] || flags["a"];
+      const help = flags["help"] || flags["h"];
+
+      if (help) {
+        printTemplate("help.license-gen");
+        process.exit(0);
+      }
       if (!type || !author) {
         printTemplate("errors.missingLicenseArgs");
         process.exit(1);
       }
-      console.log(licenseGen(type, author));
+      licenseGen(type, author);
     },
   },
   {
     name: "git-standup",
-    description: "Show git commits from last n days",
-    usage: "git-standup --days <n>",
+    description: "Show git commits with filters",
+    usage:
+      "git-standup [--days <n>] [--weeks <n>] [--months <n>] [--years <n>] [--author <name>] [--branch <branch>] [--export <path>]",
     run: (_, flags) => {
+      const help = flags["help"] || flags["h"];
+
+      if (help) {
+        printTemplate("help.git-standup");
+        process.exit(0);
+      }
+
+      if (
+        !flags["days"] &&
+        !flags["weeks"] &&
+        !flags["months"] &&
+        !flags["years"]
+      ) {
+        printTemplate("errors.missingDaysArg");
+        process.exit(1);
+      }
+
+      // Parse supported args
       const days = parseInt(flags["days"] || "0", 10);
-      if (!days || days < 1) {
+      const weeks = parseInt(flags["weeks"] || "0", 10);
+      const months = parseInt(flags["months"] || "0", 10);
+      const years = parseInt(flags["years"] || "0", 10);
+      const author = flags["author"] || flags["a"];
+      const branch = flags["branch"] || flags["b"];
+      let exportPath = flags["export"] || flags["o"];
+
+      if (days < 0 || weeks < 0 || months < 0 || years < 0) {
         printTemplate("errors.invalidDays");
         process.exit(1);
       }
-      gitStandup(days);
+
+      gitStandup({
+        days,
+        weeks,
+        months,
+        years,
+        author,
+        branch,
+        exportPath,
+      });
     },
   },
 ];

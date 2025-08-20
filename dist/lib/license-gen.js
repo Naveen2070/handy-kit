@@ -2,6 +2,7 @@ import * as fs from "fs/promises";
 import * as path from "path";
 import * as readline from "readline";
 import { fileURLToPath } from "url";
+import { printTemplate } from "./utils/templates.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 function askUser(question) {
@@ -14,15 +15,27 @@ function askUser(question) {
         resolve(ans.trim());
     }));
 }
+const SUPPORTED_LICENSES = [
+    "mit",
+    "apache-2.0",
+    "bsd-3-clause",
+    "gpl-3.0",
+    "mpl-2.0",
+    "unlicense",
+];
 export async function licenseGen(type, author, outputPath = "LICENSE") {
     const year = new Date().getFullYear();
-    const templateDir = path.resolve(__dirname, "../templates/licenses");
+    const templateDir = path.resolve(__dirname, "../assets/templates/licenses");
     const licenseFile = path.join(templateDir, `${type.toLowerCase()}.txt`);
+    if (!SUPPORTED_LICENSES.includes(type.toLowerCase())) {
+        printTemplate("errors.unsupportedLicense", { type });
+        return;
+    }
     try {
         await fs.access(licenseFile);
     }
     catch {
-        console.error(`❌ License type '${type}' not supported. Try: MIT, Apache-2.0`);
+        console.log(`❌ License file '${licenseFile}' not found.`);
         return;
     }
     let content = await fs.readFile(licenseFile, "utf-8");
@@ -30,6 +43,7 @@ export async function licenseGen(type, author, outputPath = "LICENSE") {
         .replace(/{{year}}/g, String(year))
         .replace(/{{author}}/g, author);
     try {
+        // check if output file already exists
         await fs.access(outputPath);
         console.log(`⚠️ File '${outputPath}' already exists.`);
         const ans = await askUser("Do you want to [r]eplace, [n]ew filename, or [c]ancel? ");
@@ -40,12 +54,16 @@ export async function licenseGen(type, author, outputPath = "LICENSE") {
         if (ans.toLowerCase() === "n") {
             const newName = await askUser("Enter new filename: ");
             await fs.writeFile(newName, content);
-            console.log(`✅ License saved as '${newName}'`);
+            printTemplate("success.licenseCreated", {
+                type,
+                author,
+                outputPath: newName,
+            });
             return;
         }
         if (ans.toLowerCase() === "r") {
             await fs.writeFile(outputPath, content);
-            console.log(`✅ License overwritten at '${outputPath}'`);
+            printTemplate("success.licenseReplaced", { type, author, outputPath });
             return;
         }
         console.log("❌ Invalid option. Aborting.");
@@ -54,7 +72,7 @@ export async function licenseGen(type, author, outputPath = "LICENSE") {
     catch {
         // File does not exist
         await fs.writeFile(outputPath, content);
-        console.log(`✅ License generated at '${outputPath}'`);
+        printTemplate("success.licenseGen", { type, author, outputPath });
     }
 }
 //# sourceMappingURL=license-gen.js.map

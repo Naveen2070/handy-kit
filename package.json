@@ -16,11 +16,15 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsc && npm run copy-assets",
+    "copy-assets": "cpx \"assets/**/*\" dist/assets"
   },
   "devDependencies": {
     "@types/node": "^22.17.2",
+    "cpx": "^1.2.1",
+    "rimraf": "^6.0.1",
     "typescript": "^5.9.2"
   }
 }

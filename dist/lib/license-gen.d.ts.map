@@ -1,1 +1,1 @@
-{"version":3,"file":"license-gen.d.ts","sourceRoot":"","sources":["../../src/lib/license-gen.ts"],"names":[],"mappings":"AAqBA,wBAAsB,UAAU,CAC9B,IAAI,EAAE,MAAM,EACZ,MAAM,EAAE,MAAM,EACd,UAAU,GAAE,MAAkB,GAC7B,OAAO,CAAC,IAAI,CAAC,CAoDf"}
+{"version":3,"file":"license-gen.d.ts","sourceRoot":"","sources":["../../src/lib/license-gen.ts"],"names":[],"mappings":"AA+BA,wBAAsB,UAAU,CAC9B,IAAI,EAAE,MAAM,EACZ,MAAM,EAAE,MAAM,EACd,UAAU,GAAE,MAAkB,GAC7B,OAAO,CAAC,IAAI,CAAC,CA4Df"}
