@@ -7,6 +7,12 @@ import { printTemplate } from "./utils/templates.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/**
+ * Asks user a question and resolves with the user's answer.
+ *
+ * @param question The question to ask the user.
+ * @returns A promise that resolves with the user's answer.
+ */
 function askUser(question: string): Promise<string> {
   const rl = readline.createInterface({
     input: process.stdin,
@@ -29,20 +35,39 @@ const SUPPORTED_LICENSES = [
   "unlicense",
 ];
 
+/**
+ * Generates a license file based on the given type and author.
+ * If the output file already exists, it will ask the user if they want to
+ * replace the file, use a new filename, or cancel the operation.
+ *
+ * @param type The type of license to generate. Supported types are:
+ *   - MIT
+ *   - Apache-2.0
+ *   - BSD-3-Clause
+ *   - GPL-3.0
+ *   - MPL-2.0
+ *   - Unlicense
+ * @param author The author of the project.
+ * @param outputPath The path to write the license file to. Defaults to "LICENSE".
+ * @param force If true, will overwrite the output file if it already exists.
+ */
 export async function licenseGen(
   type: string,
   author: string,
-  outputPath: string = "LICENSE"
+  outputPath: string = "LICENSE",
+  force: boolean = false
 ): Promise<void> {
   const year = new Date().getFullYear();
   const templateDir = path.resolve(__dirname, "../assets/templates/licenses");
   const licenseFile = path.join(templateDir, `${type.toLowerCase()}.txt`);
 
+  // check if license type is supported
   if (!SUPPORTED_LICENSES.includes(type.toLowerCase())) {
     printTemplate("errors.unsupportedLicense", { type });
     return;
   }
 
+  // check if license file exists
   try {
     await fs.access(licenseFile);
   } catch {
@@ -50,25 +75,34 @@ export async function licenseGen(
     return;
   }
 
+  // read license file and replace placeholders
   let content = await fs.readFile(licenseFile, "utf-8");
   content = content
     .replace(/{{year}}/g, String(year))
     .replace(/{{author}}/g, author);
 
   try {
-    // check if output file already exists
+    if (force) {
+      await fs.writeFile(outputPath, content);
+      printTemplate("success.licenseReplaced", { type, author, outputPath });
+      return;
+    }
+    // check if output file already exists and ask user what to do
     await fs.access(outputPath);
     console.log(`⚠️ File '${outputPath}' already exists.`);
 
+    // ask user what to do
     const ans = await askUser(
       "Do you want to [r]eplace, [n]ew filename, or [c]ancel? "
     );
 
+    // if user cancels, exit
     if (ans.toLowerCase() === "c") {
       console.log("❌ Cancelled.");
       return;
     }
 
+    // if user wants to replace, replace file
     if (ans.toLowerCase() === "n") {
       const newName = await askUser("Enter new filename: ");
       await fs.writeFile(newName, content);
@@ -80,6 +114,7 @@ export async function licenseGen(
       return;
     }
 
+    // if user wants to replace, replace file
     if (ans.toLowerCase() === "r") {
       await fs.writeFile(outputPath, content);
       printTemplate("success.licenseReplaced", { type, author, outputPath });
@@ -89,7 +124,7 @@ export async function licenseGen(
     console.log("❌ Invalid option. Aborting.");
     return;
   } catch {
-    // File does not exist
+    // File does not exist so create it
     await fs.writeFile(outputPath, content);
     printTemplate("success.licenseGen", { type, author, outputPath });
   }

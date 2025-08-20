@@ -2,17 +2,21 @@ import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { printTemplate } from "./utils/templates.js";
+import type { GitStandupOptions } from "./types/utils.js";
 
-interface GitStandupOptions {
-  days?: number | undefined;
-  weeks?: number | undefined;
-  months?: number | undefined;
-  years?: number | undefined;
-  author?: string | undefined;
-  branch?: string | undefined;
-  exportPath?: string | undefined;
-}
-
+/**
+ * Prints or exports a grouped list of commits from the last n days/weeks/months/years.
+ * If no duration is specified, it will throw an error.
+ *
+ * @param options - An object containing the following properties:
+ *   - `days`: The number of days to look back.
+ *   - `weeks`: The number of weeks to look back.
+ *   - `months`: The number of months to look back.
+ *   - `years`: The number of years to look back.
+ *   - `author`: An optional filter to select only commits from the specified author.
+ *   - `branch`: An optional filter to select only commits from the specified branch.
+ *   - `exportPath`: An optional path to export the report to a file.
+ */
 export function gitStandup(options: GitStandupOptions): void {
   try {
     const sinceDate = new Date();
@@ -26,10 +30,7 @@ export function gitStandup(options: GitStandupOptions): void {
 
     const since = sinceDate.toISOString().split("T")[0];
 
-    // ✅ build git log command
     let cmd = `git log --since="${since}" --pretty=format:"%ad|%an|%d|%s" --date=short`;
-    if (options.author) cmd += ` --author="${options.author}"`;
-    if (options.branch) cmd += ` ${options.branch}`;
 
     const output = execSync(cmd, { encoding: "utf-8" });
 
@@ -38,18 +39,44 @@ export function gitStandup(options: GitStandupOptions): void {
       return;
     }
 
-    // ✅ process commits into grouped format
     const lines = output.trim().split("\n");
     const grouped: Record<string, string[]> = {};
 
+    const authorFilter = options.author?.toLowerCase();
+    const branchFilters = options.branch
+      ? options.branch.split(",").map((b) => b.trim().toLowerCase())
+      : null;
+
     for (const line of lines) {
-      const [date, author, ref, message] = line.split("|");
+      const parts = line.split("|");
+      if (parts.length < 4) continue;
+
+      const [date, author, ref, ...msgParts] = parts;
+      const message = msgParts.join("|").trim();
       const branch = ref!.replace(/[() ]/g, "") || "unknown";
+
+      // author filter (case-insensitive, substring)
+      if (authorFilter && !author!.toLowerCase().includes(authorFilter)) {
+        continue;
+      }
+
+      // branch filter (case-insensitive, substring, supports multiple)
+      if (
+        branchFilters &&
+        !branchFilters.some((bf) => branch.toLowerCase().includes(bf))
+      ) {
+        continue;
+      }
+
       if (!grouped[date!]) grouped[date!] = [];
       grouped[date!]!.push(`- [${branch}] ${message} (${author})`);
     }
 
-    // ✅ format for console & markdown
+    if (Object.keys(grouped).length === 0) {
+      printTemplate("errors.gitStandupNoCommits", { days: options.days });
+      return;
+    }
+
     let formatted = "";
     for (const [date, commits] of Object.entries(grouped)) {
       formatted += `📅 ${date}\n${commits.join("\n")}\n\n`;
@@ -57,16 +84,15 @@ export function gitStandup(options: GitStandupOptions): void {
 
     console.log(formatted.trim());
 
-    // ✅ export if requested, otherwise default to current CLI path
     let exportPath =
-      options.exportPath || path.join(process.cwd(), "git-standup-report.md");
+      options.exportPath && options.exportPath.toString() === "true"
+        ? path.join(process.cwd(), "git-standup-report.md")
+        : options.exportPath;
 
-    if (exportPath.toString() === "true") {
-      exportPath = path.join(process.cwd(), "git-standup-report.md");
+    if (exportPath) {
+      fs.writeFileSync(exportPath!, `# Git Standup Report\n\n${formatted}`);
+      console.log(`✅ Exported report to ${exportPath}`);
     }
-
-    fs.writeFileSync(exportPath, `# Git Standup Report\n\n${formatted}`);
-    console.log(`✅ Exported report to ${exportPath}`);
   } catch (err) {
     printTemplate("errors.notAGitRepo");
   }

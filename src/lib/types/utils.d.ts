@@ -30,3 +30,13 @@ export interface TemplateContext {
   commands?: Command[];
   [key: string]: any;
 }
+
+export interface GitStandupOptions {
+  days?: number;
+  weeks?: number;
+  months?: number;
+  years?: number;
+  author?: string;
+  branch?: string;
+  exportPath?: string;
+}

@@ -1,19 +1,24 @@
+#!/usr/bin/env node
+
 import { gitStandup } from "../lib/git-standup.js";
 import { licenseGen } from "../lib/license-gen.js";
-import type { Command } from "../lib/types/utils.js";
+import type { Command, GitStandupOptions } from "../lib/types/utils.js";
 import { parseArgs } from "../lib/utils/args.js";
 import { printTemplate } from "../lib/utils/templates.js";
 
+// -------------------- COMMANDS --------------------
+// List of commands and their descriptions and usages
 const commands: Command[] = [
   {
     name: "license-gen",
     description: "Generate an open-source license",
-    usage: "license-gen <type> --author <name>",
+    usage: "license-gen <type> --author <name> [--output <file>] [--force]",
     run: (args, flags) => {
       const type = args[0];
       const author = flags["author"] || flags["a"];
+      const output = flags["output"] || flags["o"];
+      const yes = (flags["force"] || flags["f"]) === "true";
       const help = flags["help"] || flags["h"];
-
       if (help) {
         printTemplate("help.license-gen");
         process.exit(0);
@@ -22,7 +27,7 @@ const commands: Command[] = [
         printTemplate("errors.missingLicenseArgs");
         process.exit(1);
       }
-      licenseGen(type, author);
+      licenseGen(type, author, output ?? "LICENSE", yes);
     },
   },
   {
@@ -70,21 +75,24 @@ const commands: Command[] = [
         author,
         branch,
         exportPath,
-      });
+      } as GitStandupOptions);
     },
   },
 ];
 
 // -------------------- CLI START --------------------
+// Handle command line arguments
 const args = process.argv.slice(2);
 if (args.length === 0 || ["-h", "--help"].includes(args[0]!)) {
   printTemplate("help.main", { commands });
   process.exit(0);
 }
 
+// Parse command
 const [commandName, ...rest] = args;
 const command = commands.find((c) => c.name === commandName);
 
+// Handle unknown command
 if (!command) {
   printTemplate("errors.unknownCommand", {
     command: commandName as string,
@@ -93,5 +101,6 @@ if (!command) {
   process.exit(1);
 }
 
+// Run command
 const { positional, flags } = parseArgs(rest);
 command.run(positional, flags);

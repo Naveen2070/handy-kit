@@ -1,10 +1,24 @@
 {
   "name": "@handy/kit",
-  "version": "1.0.0",
+  "version": "0.4.0",
   "description": "A collection of handy CLI tools (license-gen, git-standup).",
   "main": "dist/bin/handy-kit.js",
   "bin": {
     "handy-kit": "dist/bin/handy-kit.js"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Naveen2070/handy-kit.git"
+  },
+  "prepare": "npm run build",
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "cli",

@@ -1,6 +1,6 @@
 {
   "help": {
-    "main": "Usage: handy-kit <command> [options]\n\nCommands:\n  license-gen <type> --author \"Name\"   Generate an open-source license (Supported: MIT, Apache-2.0, BSD-3-Clause, GPL-3.0, MPL-2.0, Unlicense)\n  git-standup --days <n>              Show git commits from last n days",
+    "main": "Usage: handy-kit <command> [options]\n\nCommands:\n  license-gen <type> --author \"Name\"   Generate an open-source license (Supported: MIT, Apache-2.0, BSD-3-Clause, GPL-3.0, MPL-2.0, Unlicense)\n  git-standup [--days <n>] [--weeks <n>] [--months <n>] [--years <n>] [--author <name>] [--branch <branch>] [--export <path>]",
     "license-gen": "Generate an open-source license\n\nUsage:\n  handy-kit license-gen <type> --author \"Your Name\"\n\nExamples:\n  handy-kit license-gen MIT --author \"Alice\"\n  handy-kit license-gen Apache-2.0 --author \"Bob\"\n\nSupported licenses:\n  MIT, Apache-2.0, BSD-3-Clause, GPL-3.0, MPL-2.0, Unlicense",
     "git-standup": "Show git commits from the last n days\n\nUsage: handy-kit git-standup --days <n>\n\nOptions:\n  --days <n>   Number of days to look back (required)\n  -h, --help   Show this help message"
   },
