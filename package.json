@@ -33,6 +33,7 @@
     "prepublishOnly": "npm run build",
     "clean": "rimraf dist",
     "build": "npm run clean && tsc && npm run copy-assets",
+    "test": "echo \"Error: no test specified\"",
     "copy-assets": "cpx \"assets/**/*\" dist/assets"
   },
   "devDependencies": {
