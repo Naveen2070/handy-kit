@@ -1,1 +1,1 @@
-{"version":3,"file":"createFolderFromTemplate.d.ts","sourceRoot":"","sources":["../../../src/lib/utils/createFolderFromTemplate.ts"],"names":[],"mappings":"AAGA;;;;;;GAMG;AACH,wBAAsB,yBAAyB,CAC7C,QAAQ,EAAE,MAAM,CAAC,MAAM,EAAE,GAAG,CAAC,EAC7B,SAAS,EAAE,MAAM,iBAsBlB"}
+{"version":3,"file":"createFolderFromTemplate.d.ts","sourceRoot":"","sources":["../../../src/lib/utils/createFolderFromTemplate.ts"],"names":[],"mappings":"AAGA;;;;;;;;GAQG;AACH,wBAAsB,yBAAyB,CAC7C,QAAQ,EAAE,MAAM,CAAC,MAAM,EAAE,GAAG,CAAC,EAC7B,SAAS,EAAE,MAAM,iBA2DlB"}
