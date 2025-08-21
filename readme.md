@@ -37,13 +37,6 @@ handy-kit --version # v0.4.0
 or
 handy-kit -v # v0.4.0
 ```
-
-You can also use `npx` and run the command directly from the command line:
-
-```bash
-npx @handykit/cli --version # v0.4.0
-```
-
 ---
 
 ## Getting Started
