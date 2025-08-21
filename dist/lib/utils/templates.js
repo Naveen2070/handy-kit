@@ -1,4 +1,4 @@
-import templates from "./templates.json" with { type: "json" };
+import { TEMPLATES } from "./templates.def.js";
 /**
  * Prints the main help message.
  */
@@ -31,7 +31,7 @@ function getTemplate(path) {
     // check if path is a key in the templates object
     const parts = path.split(".");
     // get the value at the path
-    let obj = templates;
+    let obj = TEMPLATES;
     //loop through the parts of the path
     for (const p of parts) {
         if (typeof obj === "object" && obj !== null && p in obj) {
@@ -60,9 +60,7 @@ function applyContext(template, context) {
     // replace placeholders in the template string with values from the context object and commands
     return template.replace(/{{(\w+)}}/g, (_, key) => {
         if (key === "commands" && Array.isArray(context.commands)) {
-            return context.commands
-                .map((c) => `  ${c.name}  ${c.usage}`)
-                .join("\n");
+            return context.commands.map((c) => `  ${c.name}  ${c.usage}`).join("\n");
         }
         return String(context[key] ?? "");
     });

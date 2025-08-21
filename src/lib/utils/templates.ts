@@ -1,5 +1,5 @@
 import type { TemplateContext, Templates } from "../types/utils.js";
-import templates from "./templates.json" with { type: "json" };
+import { TEMPLATES } from "./templates.def.js";
 
 /**
  * Prints the main help message.
@@ -17,7 +17,10 @@ export function printHelp() {
  *   the template string. If a key is not present in the context object, the
  *   placeholder will be left unchanged.
  */
-export function printTemplate(path: keyof Templates | string, context: TemplateContext = {}) {
+export function printTemplate(
+  path: keyof Templates | string,
+  context: TemplateContext = {}
+) {
   const msg = getTemplate(path);
   console.log(applyContext(msg, context));
 }
@@ -36,17 +39,18 @@ function getTemplate(path: keyof Templates | string): string {
   const parts = path.split(".");
 
   // get the value at the path
-  let obj: unknown = templates as Templates;
+  let obj = TEMPLATES;
 
   //loop through the parts of the path
   for (const p of parts) {
     if (typeof obj === "object" && obj !== null && p in obj) {
-      obj = (obj as Record<string, unknown>)[p];
+      obj = (obj as Record<string, unknown>)[p] as any;
     } else {
       throw new Error(`Template not found: ${path}`);
     }
   }
-  if (typeof obj !== "string") throw new Error(`Invalid template type at: ${path}`);
+  if (typeof obj !== "string")
+    throw new Error(`Invalid template type at: ${path}`);
   return obj;
 }
 
@@ -65,9 +69,7 @@ function applyContext(template: string, context: TemplateContext): string {
   // replace placeholders in the template string with values from the context object and commands
   return template.replace(/{{(\w+)}}/g, (_, key) => {
     if (key === "commands" && Array.isArray(context.commands)) {
-      return context.commands
-        .map((c) => `  ${c.name}  ${c.usage}`)
-        .join("\n");
+      return context.commands.map((c) => `  ${c.name}  ${c.usage}`).join("\n");
     }
     return String(context[key] ?? "");
   });

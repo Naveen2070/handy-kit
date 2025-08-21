@@ -2,9 +2,9 @@
   "name": "@handy/kit",
   "version": "0.4.0",
   "description": "A collection of handy CLI tools (license-gen, git-standup).",
-  "main": "dist/bin/handy-kit.js",
+  "main": "dist/cli/index.js",
   "bin": {
-    "handy-kit": "dist/bin/handy-kit.js"
+    "handy-kit": "dist/cli/index.js"
   },
   "engines": {
     "node": ">=18.17"

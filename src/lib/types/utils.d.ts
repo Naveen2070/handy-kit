@@ -2,7 +2,13 @@ export interface Command {
   name: string;
   description: string;
   usage: string;
-  run: (args: string[], flags: Flags) => void;
+  run: (args: string[], flags: Record<string, string>) => void;
+}
+
+export interface CommandGroup {
+  name: string;
+  description: string;
+  subcommands: Command[];
 }
 
 export interface Flags {
