@@ -184,7 +184,7 @@ The CLI will preview the folder structure and ask for confirmation before creati
           "type": "file_type",
           "content": "file_content"
         },
-        "paths": "file_path"
+        "paths": ["file_path"]
       }
     }
   }
