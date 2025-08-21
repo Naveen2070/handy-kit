@@ -1,6 +1,6 @@
 {
   "name": "@handykit/cli",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A collection of handy CLI tools",
   "main": "dist/cli/index.js",
   "bin": {
