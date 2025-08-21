@@ -27,7 +27,7 @@ A modular CLI tool for developers to manage licenses, Git standups, and scaffold
 Install globally via npm:
 
 ```bash
-npm install -g handy-kit
+npm install -g @handykit/cli
 ```
 
 Verify installation:
@@ -41,7 +41,7 @@ handy-kit -v # v0.4.0
 You can also use `npx` and run the command directly from the command line:
 
 ```bash
-npx handy-kit --version # v0.4.0
+npx @handykit/cli --version # v0.4.0
 ```
 
 ---
