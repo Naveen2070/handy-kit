@@ -18,7 +18,6 @@ export const scaffoldCommands = {
             description: "Create a directory structure",
             usage: "scaffold dir [--entry <folder>] [--template <name>] [--schema <path>]",
             run: async (_args, flags) => {
-                console.log(flags);
                 let entry = flags["entry"] || flags["e"];
                 let templateName = flags["template"] || flags["t"];
                 const customFile = flags["schema"] || flags["s"];

@@ -5,6 +5,7 @@ import { LicenseCommands } from "../lib/license/index.js";
 import { scaffoldCommands } from "../lib/scaffold/index.js";
 import type { CommandGroup } from "../lib/types/utils.js";
 import { parseArgs, printHelp, printTemplate } from "../lib/utils/index.js";
+import pkg from "../../package.json" with { type: "json" };
 
 // -------------------- COMMANDS --------------------
 // initialize commands and command groups and add them to the commandGroups array
@@ -25,6 +26,12 @@ if (groupName === "help") {
   printHelp();
   process.exit(0);
 }
+
+if (groupName === "--version" || groupName === "-v") {
+  console.log(`Version: ${pkg.version}`);
+  process.exit(1);
+}
+
 if (!group) {
   printTemplate("errors.unknownGroup", {
     group: groupName,
