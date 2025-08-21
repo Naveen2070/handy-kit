@@ -173,6 +173,26 @@ handy-kit scaffold dir --schema ./custom-template.json
 
 The CLI will preview the folder structure and ask for confirmation before creation.
 
+**schema definition:**
+
+```json
+{
+  "folder_name": {
+    "subfolder_name": {
+      "files": {
+        "file_name": {
+          "type": "file_type",
+          "content": "file_content"
+        },
+        "paths": "file_path"
+      }
+    }
+  }
+}
+```
+
+**note**: `content` is optional, to create a file or copy a file from a path always specify it inside the `files` object.
+
 ---
 
 ## Help & Templates

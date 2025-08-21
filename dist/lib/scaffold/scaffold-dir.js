@@ -50,16 +50,51 @@ export const scaffoldDir = async ({ entry, templateName, customFile, }) => {
             return;
         }
     }
-    // Preview the folder structure
-    function preview(templateObj, indent = 0) {
+    /**
+     * Recursively prints the folder structure to the console.
+     * @param {Record<string, any>} templateObj The template object to print.
+     * @param {number} [indent=0] The indentation level to use.
+     */
+    function preview(templateObj, indent = 0, parentKey = "") {
+        const indentStr = "  ".repeat(indent);
         for (const key of Object.keys(templateObj)) {
-            console.log(`${"  ".repeat(indent)}- ${key}/`);
-            if (typeof templateObj[key] === "object") {
-                preview(templateObj[key], indent + 1);
+            if (key === "files") {
+                const files = templateObj[key];
+                if (Array.isArray(files.paths)) {
+                    for (const fullPath of files.paths) {
+                        const fileName = path.basename(fullPath);
+                        console.log(`${indentStr}📄 ${fileName} (copied from ${fullPath})`);
+                    }
+                }
+                for (const fileName of Object.keys(files)) {
+                    if (fileName === "paths")
+                        continue;
+                    const file = files[fileName];
+                    const ext = file.type ? `.${file.type}` : "";
+                    console.log(`${indentStr}📄 ${fileName}${ext}`);
+                }
+            }
+            else if (key === "paths") {
+                const paths = templateObj[key];
+                for (const filePath of paths) {
+                    const fileName = path.basename(filePath);
+                    console.log(`${indentStr}📄 ${fileName} (top-level path)`);
+                }
+            }
+            else {
+                const value = templateObj[key];
+                const hasFiles = typeof value === "object" &&
+                    (value.files || value.paths || Object.keys(value).length > 0);
+                // Decide which icon to use: 📂 for folders with content, 📁 for empty
+                const icon = hasFiles ? "📂" : "📁";
+                console.log(`${indentStr}${icon} ${key}/`);
+                if (typeof value === "object") {
+                    preview(value, indent + 1, key);
+                }
             }
         }
     }
-    console.log("\n📁 Folder structure preview:");
+    console.log("\n🪟 Folder structure preview:");
     preview(template);
     console.log(`\nWill be created under: '${path.resolve(process.cwd(), entry)}'\n`);
     const confirm = await askUser("Do you want to proceed? [y/N]: ");
