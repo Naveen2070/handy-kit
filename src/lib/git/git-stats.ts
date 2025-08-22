@@ -2,29 +2,30 @@
 import { execSync } from "child_process";
 import { exportReport, printTemplate, renderChart } from "../utils/index.js";
 
-type Flags = {
+export type Flags = {
   since?: string;
   author?: string;
   daily?: boolean;
   weekly?: boolean;
   monthly?: boolean;
   export?: "json" | "md" | "txt";
+  metric?: "commits" | "added" | "deleted";
 };
 
-type CommitEntry = {
+export type CommitEntry = {
   hash: string;
   date: string;
   message: string;
 };
 
-type CommitStats = {
+export type CommitStats = {
   commits: number;
   added: number;
   deleted: number;
   messages: CommitEntry[];
 };
 
-type AuthorStats = Record<string, CommitStats>;
+export type AuthorStats = Record<string, CommitStats>;
 
 /**
  * gitStats.ts
@@ -172,7 +173,7 @@ export async function gitStats(flags: Flags) {
   }
 
   // 📊 Visual chart
-  renderChart(stats, flags);
+  renderChart(stats, flags.metric);
 
   if (flags.export) {
     exportReport(stats, flags, contributors);

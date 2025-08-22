@@ -10,7 +10,7 @@ Groups:
 Commands:
   handy-kit license gen <type> --author "Name"   Generate an open-source license (Supported: MIT, Apache-2.0, BSD-3-Clause, GPL-3.0, MPL-2.0, Unlicense)
   handy-kit git standup [--days <n>] [--weeks <n>] [--months <n>] [--years <n>] [--author <name>] [--branch <branch>] [--export <path>]
-  handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--export <md|json|txt>]
+  handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--metric <commits|added|deleted>] [--export <md|json|txt>]
   handy-kit scaffold dir [--entry <folder>] [--template <name>] [--schema <path>]`,
         license: `Manage open-source licenses
 
@@ -54,7 +54,7 @@ Subcommands:
 
 Usage:
   handy-kit git standup --days <n>
-  handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--export <md|json|txt>]
+  handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--metric <commits|added|deleted>] [--export <md|json|txt>]
   `,
         "git-standup": `Show git commits from the last n days/weeks/months/years
 
@@ -73,7 +73,7 @@ Options:
         "git-stats": `Show git stats from the last n days/weeks/months
 
 Usage:
-  handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--export <md|json|txt>]
+  handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--metric <commits|added|deleted>] [--export <md|json|txt>]
 
 Options:
   --since <date>   Filter commits by date
@@ -81,6 +81,7 @@ Options:
   --daily          Show commits for the last day
   --weekly         Show commits for the last week
   --monthly        Show commits for the last month
+  --metric <commits|added|deleted>  Show graph for commits, added lines or deleted lines
   --export <format>  Export commits to a file(supported: md, json, txt)
     `,
         scaffold: `Scaffold repeatable structures

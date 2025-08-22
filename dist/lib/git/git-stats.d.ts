@@ -1,11 +1,24 @@
-type Flags = {
+export type Flags = {
     since?: string;
     author?: string;
     daily?: boolean;
     weekly?: boolean;
     monthly?: boolean;
     export?: "json" | "md" | "txt";
+    metric?: "commits" | "added" | "deleted";
 };
+export type CommitEntry = {
+    hash: string;
+    date: string;
+    message: string;
+};
+export type CommitStats = {
+    commits: number;
+    added: number;
+    deleted: number;
+    messages: CommitEntry[];
+};
+export type AuthorStats = Record<string, CommitStats>;
 /**
  * gitStats.ts
  *
@@ -30,5 +43,4 @@ type Flags = {
  * bottom.
  */
 export declare function gitStats(flags: Flags): Promise<void>;
-export {};
 //# sourceMappingURL=git-stats.d.ts.map

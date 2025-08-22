@@ -133,7 +133,7 @@ export async function gitStats(flags) {
         }
     }
     // 📊 Visual chart
-    renderChart(stats, flags);
+    renderChart(stats, flags.metric);
     if (flags.export) {
         exportReport(stats, flags, contributors);
     }

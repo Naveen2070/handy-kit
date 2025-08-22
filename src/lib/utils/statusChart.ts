@@ -1,23 +1,39 @@
-/**
- * Prints a commit chart to the console, grouped by author and then
- * grouped by period (daily, weekly, monthly). The chart shows the number
- * of commits each author made in each period.
- *
- * @param stats - An object of author stats, where each author has a
- *   sub-object with period stats (e.g. daily, weekly, monthly). Each
- *   period stat has a `commits` property with the number of commits.
- * @param flags - Unused
- */
-export function renderChart(stats: Record<string, any>, flags: any): void {
-  console.log("\n📊 COMMIT CHART\n");
+import type { AuthorStats } from "../git/git-stats.js";
 
-  for (const author of Object.keys(stats)) {
-    console.log(`👤 ${author}`);
-    for (const period of Object.keys(stats[author])) {
-      const { commits } = stats[author][period];
-      const bar = "█".repeat(Math.min(commits, 40)); // Cap width
-      console.log(`   ${period.padEnd(20)} | ${bar} (${commits})`);
+/**
+ * Renders a console chart of the contribution statistics.
+ *
+ * @param stats - An object with author names as keys and their contribution statistics as values.
+ * @param metric - The metric to use for the chart (default: "commits").
+ */
+export function renderChart(
+  stats: Record<string, AuthorStats>,
+  metric: "commits" | "added" | "deleted" = "commits"
+): void {
+  console.log("\n=== Contribution Chart ===");
+
+  // Collect all values for scaling
+  const values: number[] = [];
+  for (const author in stats) {
+    for (const period in stats[author]) {
+      values.push(stats[author][period]![metric]);
     }
-    console.log("");
+  }
+
+  const maxVal = Math.max(...values, 1); // prevent divide by zero
+
+  // Render
+  for (const author in stats) {
+    console.log(`\n${author}`);
+    const sortedPeriods = Object.keys(stats[author]!).sort();
+
+    for (const period of sortedPeriods) {
+      const entry = stats[author]![period];
+      const value = entry![metric];
+      const barLength = Math.floor((value / maxVal) * 40);
+      const bar = "█".repeat(barLength);
+
+      console.log(`  ${period}: ${bar} (${value} ${metric})`);
+    }
   }
 }

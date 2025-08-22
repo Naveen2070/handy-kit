@@ -56,7 +56,7 @@ export const GitCommands = {
         {
             name: "stats",
             description: "Show git status",
-            usage: "git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--export <md|json|txt>]",
+            usage: "git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--metric <commits|added|deleted>] [--export <md|json|txt>]",
             run: (_, flags) => {
                 const help = flags["help"] || flags["h"];
                 if (help || Object.keys(flags).length === 0) {
