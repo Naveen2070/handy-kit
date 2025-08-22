@@ -1,6 +1,6 @@
 {
-  "name": "@handy/kit",
-  "version": "0.4.0",
+  "name": "@handykit/cli",
+  "version": "0.4.2",
   "description": "A collection of handy CLI tools",
   "main": "dist/cli/index.js",
   "bin": {
@@ -14,7 +14,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Naveen2070/handy-kit.git"
+    "url": "git+https://github.com/Naveen2070/handy-kit.git"
   },
   "prepare": "npm run build",
   "publishConfig": {
@@ -33,6 +33,7 @@
     "prepublishOnly": "npm run build",
     "clean": "rimraf dist",
     "build": "npm run clean && tsc && npm run copy-assets",
+    "test": "echo \"Error: no test specified\"",
     "copy-assets": "cpx \"assets/**/*\" dist/assets"
   },
   "devDependencies": {
