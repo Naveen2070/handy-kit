@@ -104,23 +104,23 @@ function renderTable(title: string, section: Record<string, any>) {
   let output = `\n=== ${title} ===\n`;
 
   output +=
-    pad(headers[0], colWidths[0]) +
-    pad(headers[1], colWidths[1], "right") +
-    pad(headers[2], colWidths[2], "right") +
+    pad(headers[0]!, colWidths[0]!) +
+    pad(headers[1]!, colWidths[1]!, "right") +
+    pad(headers[2]!, colWidths[2]!, "right") +
     "\n";
 
   output +=
-    "-".repeat(colWidths[0]) +
-    "-".repeat(colWidths[1]) +
-    "-".repeat(colWidths[2]) +
+    "-".repeat(colWidths[0]!) +
+    "-".repeat(colWidths[1]!) +
+    "-".repeat(colWidths[2]!) +
     "\n";
 
   for (const [pkg, data] of Object.entries(section)) {
     const totalSize = calcTotalSize(data);
     output +=
-      pad(pkg, colWidths[0]) +
-      pad(formatSize(data.size), colWidths[1], "right") +
-      pad(formatSize(totalSize), colWidths[2], "right") +
+      pad(pkg, colWidths[0]!) +
+      pad(formatSize(data.size), colWidths[1]!, "right") +
+      pad(formatSize(totalSize), colWidths[2]!, "right") +
       "\n";
   }
 
@@ -152,23 +152,23 @@ export async function exportResults(
         const headers = ["Package", "Size", "Total Size (incl. deps)"];
 
         let str =
-          pad(headers[0], colWidths[0]) +
-          pad(headers[1], colWidths[1], "right") +
-          pad(headers[2], colWidths[2], "right") +
+          pad(headers[0]!, colWidths[0]!) +
+          pad(headers[1]!, colWidths[1]!, "right") +
+          pad(headers[2]!, colWidths[2]!, "right") +
           "\n";
 
         str +=
-          "-".repeat(colWidths[0]) +
-          "-".repeat(colWidths[1]) +
-          "-".repeat(colWidths[2]) +
+          "-".repeat(colWidths[0]!) +
+          "-".repeat(colWidths[1]!) +
+          "-".repeat(colWidths[2]!) +
           "\n";
 
         for (const [pkg, data] of Object.entries(res)) {
           const totalSize = calcTotalSize(data);
           str +=
-            pad(pkg, colWidths[0]) +
-            pad(formatSize(data.size), colWidths[1], "right") +
-            pad(formatSize(totalSize), colWidths[2], "right") +
+            pad(pkg, colWidths[0]!) +
+            pad(formatSize(data.size), colWidths[1]!, "right") +
+            pad(formatSize(totalSize), colWidths[2]!, "right") +
             "\n";
         }
 
