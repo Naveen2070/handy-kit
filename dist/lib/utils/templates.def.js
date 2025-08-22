@@ -10,6 +10,7 @@ Groups:
 Commands:
   handy-kit license gen <type> --author "Name"   Generate an open-source license (Supported: MIT, Apache-2.0, BSD-3-Clause, GPL-3.0, MPL-2.0, Unlicense)
   handy-kit git standup [--days <n>] [--weeks <n>] [--months <n>] [--years <n>] [--author <name>] [--branch <branch>] [--export <path>]
+  handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--export <md|json|txt>]
   handy-kit scaffold dir [--entry <folder>] [--template <name>] [--schema <path>]`,
         license: `Manage open-source licenses
 
@@ -49,9 +50,12 @@ Options:
 
 Subcommands:
   standup [options]   Show git commits from the last n days/weeks/months/years
+  stats [options]    Show git status from the last n days/weeks/months
 
 Usage:
-  handy-kit git standup --days <n>`,
+  handy-kit git standup --days <n>
+  handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--export <md|json|txt>]
+  `,
         "git-standup": `Show git commits from the last n days/weeks/months/years
 
 Usage:
@@ -65,6 +69,19 @@ Options:
   --author <name> Filter commits by author
   --branch <name> Filter commits by branch
   --export <path> Export commits to a file
+    `,
+        "git-stats": `Show git stats from the last n days/weeks/months
+
+Usage:
+  handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--export <md|json|txt>]
+
+Options:
+  --since <date>   Filter commits by date
+  --author <name>  Filter commits by author
+  --daily          Show commits for the last day
+  --weekly         Show commits for the last week
+  --monthly        Show commits for the last month
+  --export <format>  Export commits to a file(supported: md, json, txt)
     `,
         scaffold: `Scaffold repeatable structures
 
@@ -106,6 +123,7 @@ Available groups:
         licenseCreated: "✅ License file {{type}} created successfully by {{author}} at {{outputPath}}",
         licenseReplaced: "♻️ License file replaced successfully at {{outputPath}}",
         gitStandupNoCommits: "ℹ️ No commits found in the given time range.",
+        gitStats: "✅ Showing git stats since {{since}}.",
     },
 };
 //# sourceMappingURL=templates.def.js.map

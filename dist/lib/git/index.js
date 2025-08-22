@@ -1,5 +1,6 @@
 import { printTemplate } from "../utils/index.js";
 import { gitStandup } from "./git-standup.js";
+import { gitStats } from "./git-stats.js";
 export const GitCommands = {
     name: "git",
     description: "Git utilities",
@@ -50,6 +51,19 @@ export const GitCommands = {
                     branch,
                     exportPath,
                 });
+            },
+        },
+        {
+            name: "stats",
+            description: "Show git status",
+            usage: "git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--export <md|json|txt>]",
+            run: (_, flags) => {
+                const help = flags["help"] || flags["h"];
+                if (help || Object.keys(flags).length === 0) {
+                    printTemplate("help.git-stats");
+                    process.exit(0);
+                }
+                gitStats(flags);
             },
         },
     ],
