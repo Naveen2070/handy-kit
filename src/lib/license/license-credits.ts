@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
-import { printTemplate } from "../utils/index.js";
+import { printTemplate } from "../utils/common/index.js";
 
 interface PackageInfo {
   name: string;

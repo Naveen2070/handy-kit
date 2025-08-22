@@ -4,8 +4,9 @@ import { GitCommands } from "../lib/git/index.js";
 import { LicenseCommands } from "../lib/license/index.js";
 import { scaffoldCommands } from "../lib/scaffold/index.js";
 import type { CommandGroup } from "../lib/types/utils.js";
-import { parseArgs, printHelp, printTemplate } from "../lib/utils/index.js";
+import { parseArgs, printHelp, printTemplate } from "../lib/utils/common/index.js";
 import pkg from "../../package.json" with { type: "json" };
+import { DepsCommands } from "../lib/deps/index.js";
 
 // -------------------- COMMANDS --------------------
 // initialize commands and command groups and add them to the commandGroups array
@@ -15,6 +16,7 @@ const commandGroups: CommandGroup[] = [];
 commandGroups.push(LicenseCommands);
 commandGroups.push(GitCommands);
 commandGroups.push(scaffoldCommands);
+commandGroups.push(DepsCommands)
 
 // -------------------- CLI START --------------------
 // Handle command line arguments

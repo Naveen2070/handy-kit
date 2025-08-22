@@ -1,6 +1,10 @@
 // gitStats.ts
 import { execSync } from "child_process";
-import { exportReport, printTemplate, renderChart } from "../utils/index.js";
+import {
+  exportReport,
+  printTemplate,
+  renderChart,
+} from "../utils/common/index.js";
 
 export type Flags = {
   since?: string;

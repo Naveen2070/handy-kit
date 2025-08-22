@@ -1,5 +1,5 @@
 import type { CommandGroup, GitStandupOptions } from "../types/utils.js";
-import { printTemplate } from "../utils/index.js";
+import { printTemplate } from "../utils/common/index.js";
 import { gitStandup } from "./git-standup.js";
 import { gitStats } from "./git-stats.js";
 
