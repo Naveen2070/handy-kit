@@ -3,13 +3,5 @@
   "components": {},
   "pages": {},
   "hooks": {},
-  "utils": {
-    "files": {
-      "axios-instance": {
-        "type": "js",
-        "content": "import axios from 'axios';\n\nexport const axiosInstance = axios.create({\n  baseURL: 'https://api.example.com',\n  timeout: 10000,\n});\n\nexport default axiosInstance;"
-      },
-      "paths": ["D:\\Project_naveen\\PW\\handy-kit\\src\\lib\\utils\\args.ts"]
-    }
-  }
+  "utils": {}
 }
