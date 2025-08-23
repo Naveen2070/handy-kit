@@ -6,12 +6,15 @@ Groups:
   license     Manage open-source licenses
   git         Git utilities
   scaffold    Scaffold repeatable structures
+  deps        Dependency related commands
 
 Commands:
   handy-kit license gen <type> --author "Name"   Generate an open-source license (Supported: MIT, Apache-2.0, BSD-3-Clause, GPL-3.0, MPL-2.0, Unlicense)
   handy-kit git standup [--days <n>] [--weeks <n>] [--months <n>] [--years <n>] [--author <name>] [--branch <branch>] [--export <path>]
   handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--metric <commits|added|deleted>] [--export <md|json|txt>]
-  handy-kit scaffold dir [--entry <folder>] [--template <name>] [--schema <path>]`,
+  handy-kit scaffold dir [--entry <folder>] [--template <name>] [--schema <path>]
+  handy-kit deps size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]
+  `,
         license: `Manage open-source licenses
 
 Subcommands:
@@ -100,6 +103,27 @@ Options:
   --entry <folder>   The folder to create the directory structure in (default: ".")
   --template <name>  The name of the template to use (default: "default")
   --schema <path>      The path to write the directory structure to (default: "scaffold")
+    `,
+        deps: `Dependency related commands
+
+Subcommands:
+  size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]   Show dependency sizes
+
+Usage:
+  handy-kit deps size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]
+  `,
+        "deps-size": `Show dependency sizes
+
+Usage:
+  handy-kit deps size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]
+
+Options:
+  --verbose | -v   Show all dependencies
+  --tree | -t      Show dependency tree
+  --table | -t     Show dependency table
+  --depth | -d     search depth level (default: 3)
+  --concurrency | -c     concurrent file reads (default: 10)
+  --export | -e     Export dependency sizes to a file
     `,
     },
     errors: {
