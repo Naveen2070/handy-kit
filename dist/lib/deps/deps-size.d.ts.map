@@ -1,1 +1,1 @@
-{"version":3,"file":"deps-size.d.ts","sourceRoot":"","sources":["../../../src/lib/deps/deps-size.ts"],"names":[],"mappings":"AASA,wBAAsB,WAAW,CAAC,KAAK,EAAE;IACvC,OAAO,EAAE,OAAO,CAAC;IACjB,IAAI,EAAE,OAAO,CAAC;IACd,MAAM,EAAE,MAAM,CAAC;IACf,KAAK,EAAE,OAAO,CAAC;CAChB,iBA4BA"}
+{"version":3,"file":"deps-size.d.ts","sourceRoot":"","sources":["../../../src/lib/deps/deps-size.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,mBAAmB,CAAC;AAWtD,wBAAsB,WAAW,CAAC,KAAK,EAAE,YAAY,iBAsCpD"}

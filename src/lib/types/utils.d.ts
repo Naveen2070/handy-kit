@@ -46,3 +46,12 @@ export interface GitStandupOptions {
   branch?: string;
   exportPath?: string;
 }
+
+export type DepsSizeFlag = {
+  verbose: boolean;
+  tree: boolean;
+  export: string;
+  table: boolean;
+  depth: number;
+  concurrency: number;
+};

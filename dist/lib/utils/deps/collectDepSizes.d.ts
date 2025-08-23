@@ -1,7 +1,7 @@
 export declare function collectDepSizes(modulePath: string, cache: Map<string, {
     size: number;
     deps: Record<string, any>;
-}>): Promise<{
+}>, depth?: number, maxDepth?: number): Promise<{
     size: number;
     deps: Record<string, any>;
 }>;

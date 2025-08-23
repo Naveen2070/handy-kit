@@ -16,14 +16,28 @@ export const DepsCommands = {
         {
             name: "size",
             description: "Show dependency sizes",
-            usage: "deps size",
+            usage: "deps size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]",
             run: async (_, flags) => {
                 const help = flags["help"] || flags["h"];
                 if (help) {
                     printTemplate("help.deps-size");
                     process.exit(0);
                 }
-                await getDepsSize(flags);
+                const verbose = !!((flags["verbose"] || flags["v"]) === "true");
+                const tree = !!((flags["tree"] || flags["t"]) === "true");
+                const table = !!((flags["table"] || flags["t"]) === "true");
+                const depth = parseInt(flags["depth"] || flags["d"], 10) || 5;
+                const concurrency = parseInt(flags["concurrency"] || flags["c"], 10) || 10;
+                const exportFormat = flags["export"] || flags["e"] || "";
+                const DepsFlag = {
+                    verbose,
+                    tree,
+                    table,
+                    depth,
+                    concurrency,
+                    export: exportFormat,
+                };
+                await getDepsSize(DepsFlag);
             },
         },
     ],

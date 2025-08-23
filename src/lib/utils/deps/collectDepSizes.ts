@@ -4,13 +4,22 @@ import { getFolderSize } from "./fileUtils.js";
 
 const require = createRequire(import.meta.url);
 
-// Recursively collect size and subdependencies with cache
 export async function collectDepSizes(
   modulePath: string,
-  cache: Map<string, { size: number; deps: Record<string, any> }>
+  cache: Map<string, { size: number; deps: Record<string, any> }>,
+  depth = 0,
+  maxDepth = 2
 ): Promise<{ size: number; deps: Record<string, any> }> {
   if (cache.has(modulePath)) {
     return cache.get(modulePath)!;
+  }
+
+  // Stop recursion if maxDepth reached
+  if (depth > maxDepth) {
+    const size = await getFolderSize(modulePath);
+    const result = { size, deps: {} };
+    cache.set(modulePath, result);
+    return result;
   }
 
   const size = await getFolderSize(modulePath);
@@ -34,6 +43,7 @@ export async function collectDepSizes(
           require.resolve(`${dep}/package.json`, { paths: [process.cwd()] })
         );
       } catch {
+        // fallback path if resolution fails
         const fallback = path.join(modulePath, "node_modules", dep);
         try {
           const stat = await (await import("fs/promises")).stat(fallback);
@@ -46,13 +56,13 @@ export async function collectDepSizes(
       }
 
       if (depPath) {
-        deps[dep] = await collectDepSizes(depPath, cache);
+        deps[dep] = await collectDepSizes(depPath, cache, depth + 1, maxDepth);
       } else {
         deps[dep] = { size: 0, deps: {} };
       }
     }
   } catch {
-    // skip invalid/missing package.json
+    // skip if no or invalid package.json
   }
 
   return result;
