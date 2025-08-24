@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import type { Flags } from "../../types/utils.js";
 
 type ExportData = Record<string, any>;
 
