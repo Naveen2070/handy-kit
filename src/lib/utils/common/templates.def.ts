@@ -7,6 +7,7 @@ Groups:
   git         Git utilities
   scaffold    Scaffold repeatable structures
   deps        Dependency related commands
+  code        Code analysis related commands
 
 Commands:
   handy-kit license gen <type> --author "Name"   Generate an open-source license (Supported: MIT, Apache-2.0, BSD-3-Clause, GPL-3.0, MPL-2.0, Unlicense)
