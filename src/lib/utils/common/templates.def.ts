@@ -15,6 +15,7 @@ Commands:
   handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--metric <commits|added|deleted>] [--export <md|json|txt>]
   handy-kit scaffold dir [--entry <folder>] [--template <name>] [--schema <path>]
   handy-kit deps size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]
+  handy-kit code unused [--path | -p] [--exports | -e] [--files | -f] [--help | -h]
   `,
 
     license: `Manage open-source licenses
@@ -133,6 +134,25 @@ Options:
   --depth | -d     search depth level (default: 3)
   --concurrency | -c     concurrent file reads (default: 10)
   --export | -e     Export dependency sizes to a file
+    `,
+    code: `Code related commands
+
+Subcommands:
+  unused [--path | -p] [--exports | -e] [--files | -f] [--help | -h]  Show unused exports and files
+
+Usage:
+  handy-kit code unused [--path | -p] [--exports | -e] [--files | -f] [--help | -h]
+  `,
+    "code-unused": `Show unused exports and files
+
+Usage:
+  handy-kit code unused [--path | -p] [--exports | -e] [--files | -f] [--help | -h]
+
+Options:
+  --path | -p     The path to search for unused exports and files
+  --export | -e   Export unused exports and files to a file
+  --files | -f    Show unused files
+  --help | -h     Show this help message
     `,
   },
 

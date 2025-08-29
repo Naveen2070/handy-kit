@@ -18,7 +18,8 @@ export const CodeCommands: CommandGroup = {
     {
       name: "unused",
       description: "Show unused code",
-      usage: "code unused",
+      usage:
+        "code unused [--path | -p] [--exports | -e] [--files | -f] [--help | -h]",
       run: (_, flags) => {
         const path = flags.path || ("src" as string);
         const help = flags["help"] || flags["h"];

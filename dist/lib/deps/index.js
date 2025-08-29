@@ -25,7 +25,7 @@ export const DepsCommands = {
                 }
                 const verbose = !!((flags["verbose"] || flags["v"]) === "true");
                 const tree = !!((flags["tree"] || flags["t"]) === "true");
-                const table = !!((flags["table"] || flags["t"]) === "true");
+                const table = !!((flags["table"] || flags["T"]) === "true");
                 const depth = parseInt(flags["depth"] || flags["d"], 10) || 5;
                 const concurrency = parseInt(flags["concurrency"] || flags["c"], 10) || 10;
                 const exportFormat = flags["export"] || flags["e"] || "";

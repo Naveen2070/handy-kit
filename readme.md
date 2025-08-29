@@ -1,6 +1,6 @@
 # handy-kit
 
-A modular CLI tool for developers to manage licenses, Git standups, and scaffold repeatable project structures.
+A modular CLI tool for developers — manage licenses, analyze Git activity, inspect dependencies, find unused code, and scaffold repeatable project structures.
 
 ---
 
@@ -10,15 +10,15 @@ A modular CLI tool for developers to manage licenses, Git standups, and scaffold
 - [Getting Started](#getting-started)
 - [Command Groups](#command-groups)
   - [License](#license)
-    - [Generate License](#generate-license)
-    - [Generate Credits](#generate-credits)
   - [Git](#git)
     - [Git Standup](#git-standup)
+    - [Git Stats](#git-stats)
   - [Scaffold](#scaffold)
     - [Create Directory Structure](#create-directory-structure)
-- [Help & Templates](#help--templates)
-- [Contributing](#contributing)
-- [License](#license-info)
+  - [Deps](#deps)
+    - [Dependency Size](#dependency-size)
+  - [Code](#code)
+    - [Unused Exports & Files](#unused-exports--files)
 
 ---
 
@@ -33,10 +33,11 @@ npm install -g @handykit/cli
 Verify installation:
 
 ```bash
-handy-kit --version # v0.4.0
+handy-kit --version # v0.4.3
 or
-handy-kit -v # v0.4.0
+handy-kit -v # v0.4.3
 ```
+
 ---
 
 ## Getting Started
@@ -47,7 +48,7 @@ All commands follow the structure:
 handy-kit <group> <command> [options]
 ```
 
-Available groups: `license`, `git`, `scaffold`.
+Available groups: `license`, `git`, `scaffold`, `deps`, `code`.
 
 Use `handy-kit <group> help` to see group-specific commands and usage.
 
@@ -138,6 +139,32 @@ handy-kit git standup --weeks 2 --author "Alice"
 handy-kit git standup --months 1 --branch main,develop --export report.md
 ```
 
+#### Git Stats
+
+Show commit stats grouped daily, weekly, or monthly, with optional charts.
+
+```bash
+handy-kit git stats [--since <date>] [--author <name>] [--daily|--weekly|--monthly] [--metric <commits|added|deleted>] [--export <format>]
+```
+
+**Options:**
+
+- `--since` / `-s` : Filter commits by date
+- `--author` / `-a` : Filter by commit author
+- `--daily` : Show commits by daily summary
+- `--weekly` : Show commits by weekly summary
+- `--monthly` : Show commits by monthly summary
+- `--metric` / `-m` : Show graph for commits, added lines, or deleted lines
+- `--export` / `-o` : Export report to file
+
+**Example:**
+
+```bash
+handy-kit git stats --since "2023-01-01"
+handy-kit git stats --author "Alice" --daily --metric commits
+handy-kit git stats --since "2023-01-01" --export report.md
+```
+
 ---
 
 ### Scaffold
@@ -188,6 +215,68 @@ The CLI will preview the folder structure and ask for confirmation before creati
 
 ---
 
+### Deps
+
+Analyze project dependencies.
+
+#### Dependency Size
+
+Calculate size of dependencies in `node_modules` and nested dependencies.
+
+```bash
+handy-kit deps size [--verbose | -v] [--tree | -t] [--table | -T] [--depth <n>] [--concurrency <n>] [--export <md|json|txt>]
+```
+
+**Options:**
+
+- `--verbose` / `-v` : Show nested dependencies with their sizes
+- `--tree` / `-t` : Display in tree view
+- `--table` / `-T` : Display as a table
+- `--depth` / `-d` : Maximum depth of dependency tree (default: 3)
+- `--concurrency` / `-c` : Maximum number of concurrent file reads (default: 10)
+- `--export` / `-o` : Export report to file (supported formats: `md`, `json`, `txt` and default: `md`)
+
+**Example:**
+
+```bash
+handy-kit deps size --verbose
+handy-kit deps size --tree --depth 5
+handy-kit deps size --table --export report.md
+handy-kit deps size --verbose --export report.json
+```
+
+---
+
+### Code
+
+Analyze project source code.
+
+#### Unused Exports & Files
+
+Find unused exports and files in your codebase.
+
+```bash
+handy-kit code unused [--path <dir>] [--exports] [--files] [--help]
+```
+
+**Options:**
+
+- `--path` / `-p` : Path to analyze (default: `{cwd}/src`)
+- `--exports` / `-e` : Show unused exports
+- `--files` / `-f` : Show unused files
+- `--help` / `-h` : Show this help message
+
+**Example:**
+
+```bash
+handy-kit code unused --exports
+handy-kit code unused --files
+handy-kit code unused --path app --exports
+handy-kit code unused --exports --files
+```
+
+---
+
 ## Help & Templates
 
 Print the main help:
@@ -230,3 +319,19 @@ Generated licenses and credits can be freely applied to your projects.
 
 - Inspired by the need for a simple, modular CLI tool
 - Built with Node.js, modern ES modules, and readline for interactivity
+
+---
+
+## Roadmap
+
+Planned features and improvements for future releases:
+
+- **Output formatting templates** — customizable layouts for `deps tree`, `deps table`, and Git charts.
+- **Richer code quality checks** — extend `code` group with detection for unused imports, circular dependencies, and complexity reports.
+- **Interactive scaffold mode** — guided prompts to build directory structures interactively instead of only from templates.
+- **Comprehensive testing** — add test coverage across all commands and subcommands.
+- **Library quality improvements** — ongoing enhancements to performance, stability, and developer experience.
+
+Have more ideas? Open an issue or contribute!
+
+---

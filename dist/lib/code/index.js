@@ -16,7 +16,7 @@ export const CodeCommands = {
         {
             name: "unused",
             description: "Show unused code",
-            usage: "code unused",
+            usage: "code unused [--path | -p] [--exports | -e] [--files | -f] [--help | -h]",
             run: (_, flags) => {
                 const path = flags.path || "src";
                 const help = flags["help"] || flags["h"];
