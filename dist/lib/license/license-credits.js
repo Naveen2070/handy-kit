@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
-import { printTemplate } from "../utils/index.js";
+import { printTemplate } from "../utils/common/index.js";
 const LICENSE_URLS = {
     mit: "https://opensource.org/licenses/MIT",
     "apache-2.0": "https://www.apache.org/licenses/LICENSE-2.0",

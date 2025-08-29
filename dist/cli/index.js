@@ -1,9 +1,11 @@
 #!/usr/bin/env node
+import pkg from "../../package.json" with { type: "json" };
+import { parseArgs, printHelp, printTemplate } from "../lib/utils/common/index.js";
 import { GitCommands } from "../lib/git/index.js";
 import { LicenseCommands } from "../lib/license/index.js";
 import { scaffoldCommands } from "../lib/scaffold/index.js";
-import { parseArgs, printHelp, printTemplate } from "../lib/utils/index.js";
-import pkg from "../../package.json" with { type: "json" };
+import { DepsCommands } from "../lib/deps/index.js";
+import { CodeCommands } from "../lib/code/index.js";
 // -------------------- COMMANDS --------------------
 // initialize commands and command groups and add them to the commandGroups array
 const commandGroups = [];
@@ -11,6 +13,8 @@ const commandGroups = [];
 commandGroups.push(LicenseCommands);
 commandGroups.push(GitCommands);
 commandGroups.push(scaffoldCommands);
+commandGroups.push(DepsCommands);
+commandGroups.push(CodeCommands);
 // -------------------- CLI START --------------------
 // Handle command line arguments
 const args = process.argv.slice(2);

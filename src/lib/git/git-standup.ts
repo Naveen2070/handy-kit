@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import { printTemplate } from "../utils/index.js";
+import { printTemplate } from "../utils/common/index.js";
 import type { GitStandupOptions } from "../types/utils.js";
 
 /**

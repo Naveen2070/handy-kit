@@ -1,7 +1,6 @@
-import { askUser } from "../utils/index.js";
+import { askUser, createFoldersFromTemplate } from "../utils/common/index.js";
 import * as fs from "fs/promises";
 import * as path from "path";
-import { createFoldersFromTemplate } from "../utils/index.js";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);

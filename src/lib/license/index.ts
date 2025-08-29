@@ -1,5 +1,5 @@
 import type { CommandGroup } from "../types/utils.js";
-import { printTemplate } from "../utils/index.js";
+import { printTemplate } from "../utils/common/index.js";
 import { generateCredits } from "./license-credits.js";
 import { licenseGen } from "./license-gen.js";
 

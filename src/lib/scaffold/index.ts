@@ -1,5 +1,5 @@
 import type { CommandGroup } from "../types/utils.js";
-import { printTemplate } from "../utils/index.js";
+import { printTemplate } from "../utils/common/index.js";
 import { scaffoldDir } from "./scaffold-dir.js";
 
 export const scaffoldCommands: CommandGroup = {
