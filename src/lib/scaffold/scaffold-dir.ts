@@ -36,6 +36,11 @@ export const scaffoldDir = async ({
   non_interactive?: boolean;
   force?: boolean;
 }) => {
+  if (interactive && non_interactive) {
+    console.error("❌ Cannot use interactive mode in non-interactive mode.");
+    return;
+  }
+
   // 1. ENTRY
   if (!entry) {
     if (non_interactive) {

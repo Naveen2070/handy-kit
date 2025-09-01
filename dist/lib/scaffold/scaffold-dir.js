@@ -17,6 +17,10 @@ const __dirname = path.dirname(__filename);
  * @param {boolean} [options.interactive] - Whether to use interactive mode.
  */
 export const scaffoldDir = async ({ entry, templateName, customFile, interactive = false, non_interactive = false, force = false, }) => {
+    if (interactive && non_interactive) {
+        console.error("❌ Cannot use interactive mode in non-interactive mode.");
+        return;
+    }
     // 1. ENTRY
     if (!entry) {
         if (non_interactive) {
