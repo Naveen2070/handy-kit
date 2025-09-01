@@ -1,7 +1,9 @@
-import { askUser, createFoldersFromTemplate } from "../utils/common/index.js";
+import { askUser } from "../utils/common/index.js";
 import * as fs from "fs/promises";
 import * as path from "path";
+import * as os from "os";
 import { fileURLToPath } from "url";
+import { createFoldersFromTemplate, runInteractiveWizard, } from "../utils/scaffold/index.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 /**
@@ -12,17 +14,29 @@ const __dirname = path.dirname(__filename);
  * @param {string} [options.entry] - The folder to create the directory structure in. Defaults to "src".
  * @param {string} [options.templateName] - The name of the template to use. Defaults to "react-default".
  * @param {string} [options.customFile] - The path to a custom template file.
+ * @param {boolean} [options.interactive] - Whether to use interactive mode.
  */
-export const scaffoldDir = async ({ entry, templateName, customFile, }) => {
-    // Get the entry folder
+export const scaffoldDir = async ({ entry, templateName, customFile, interactive = false, }) => {
     if (!entry) {
         entry = (await askUser("Enter entry folder (default 'src'): ")) || "src";
     }
-    // Get the template
-    const templateDir = path.resolve(__dirname, "../../assets/templates/dir");
     let template;
-    // Read custom template
-    if (customFile) {
+    const defaultTemplateDir = path.resolve(__dirname, "../../assets/templates/dir");
+    const userTemplateDir = path.resolve(os.homedir(), ".scaffold-cli/templates/dir");
+    await fs.mkdir(userTemplateDir, { recursive: true });
+    if (interactive) {
+        // 👨‍🎨 Interactive flow
+        template = await runInteractiveWizard();
+        const save = await askUser("Save this structure as a reusable template? [y/N]: ");
+        if (["y", "yes"].includes(save.toLowerCase())) {
+            const name = await askUser("Enter template name (e.g. my-template): ");
+            const savePath = path.resolve(userTemplateDir, `${name}.json`);
+            await fs.writeFile(savePath, JSON.stringify(template, null, 2), "utf8");
+            console.log(`✅ Template saved at ${savePath}`);
+        }
+    }
+    else if (customFile) {
+        // 📄 Load from custom file
         try {
             const fileContent = await fs.readFile(path.resolve(customFile), "utf-8");
             template = JSON.parse(fileContent);
@@ -33,28 +47,86 @@ export const scaffoldDir = async ({ entry, templateName, customFile, }) => {
         }
     }
     else {
-        // Read template from assets/templates/dir
+        // 📦 Select from templates (default + user + interactive)
+        const [defaultTemplates, userTemplates] = await Promise.all([
+            fs.readdir(defaultTemplateDir),
+            fs.readdir(userTemplateDir),
+        ]);
+        const allTemplates = [
+            ...defaultTemplates.map((name) => ({
+                name,
+                type: "default",
+                path: path.join(defaultTemplateDir, name),
+            })),
+            ...userTemplates.map((name) => ({
+                name,
+                type: "user",
+                path: path.join(userTemplateDir, name),
+            })),
+        ];
+        const templateOptions = [
+            ...allTemplates.map((t, i) => ({
+                label: `${i + 1}. ${t.type === "user" ? "📦 user" : "📦 default"} - ${t.name.replace(".json", "")}`,
+                value: t.name.replace(".json", ""),
+                index: i,
+            })),
+            {
+                label: `${allTemplates.length + 1}. 🎨 interactive - create from scratch`,
+                value: "interactive",
+                index: allTemplates.length,
+            },
+        ];
         if (!templateName) {
-            templateName = await askUser(`Choose one of the following templates: 
-      \n react-default(default) 
-      \n Enter template name: `);
+            const selection = await askUser(`Choose one of the following templates:\n${templateOptions
+                .map((opt) => opt.label)
+                .join("\n")}\nEnter template number or name: `);
+            const selectedByIndex = parseInt(selection);
+            const selectedTemplate = templateOptions.find((opt) => opt.value === selection) ||
+                templateOptions.find((opt) => opt.index === selectedByIndex - 1);
+            if (!selectedTemplate) {
+                console.error("❌ Invalid selection.");
+                return;
+            }
+            if (selectedTemplate.value === "interactive") {
+                interactive = true;
+                template = await runInteractiveWizard();
+                const save = await askUser("Save this structure as a reusable template? [y/N]: ");
+                if (["y", "yes"].includes(save.toLowerCase())) {
+                    const name = await askUser("Enter template name (e.g. my-template): ");
+                    const savePath = path.resolve(userTemplateDir, `${name}.json`);
+                    await fs.writeFile(savePath, JSON.stringify(template, null, 2), "utf8");
+                    console.log(`✅ Template saved at ${savePath}`);
+                }
+            }
+            else {
+                try {
+                    const fileContent = await fs.readFile(allTemplates[selectedTemplate.index].path, "utf-8");
+                    template = JSON.parse(fileContent);
+                }
+                catch (err) {
+                    console.error("❌ Error reading template:", err);
+                    return;
+                }
+            }
         }
-        templateName = templateName || "react-default";
-        try {
-            const fileContent = await fs.readFile(path.resolve(templateDir, `${templateName}.json`), "utf-8");
-            template = JSON.parse(fileContent);
-        }
-        catch (err) {
-            console.error("❌ Error reading template:", err);
-            return;
+        else {
+            const selectedTemplate = allTemplates.find((t) => t.name.replace(".json", "") === templateName);
+            if (!selectedTemplate) {
+                console.error("❌ Template not found:", templateName);
+                return;
+            }
+            try {
+                const fileContent = await fs.readFile(selectedTemplate.path, "utf-8");
+                template = JSON.parse(fileContent);
+            }
+            catch (err) {
+                console.error("❌ Error reading template:", err);
+                return;
+            }
         }
     }
-    /**
-     * Recursively prints the folder structure to the console.
-     * @param {Record<string, any>} templateObj The template object to print.
-     * @param {number} [indent=0] The indentation level to use.
-     */
-    function preview(templateObj, indent = 0, parentKey = "") {
+    // 🪟 Preview
+    function preview(templateObj, indent = 0) {
         const indentStr = "  ".repeat(indent);
         for (const key of Object.keys(templateObj)) {
             if (key === "files") {
@@ -84,12 +156,10 @@ export const scaffoldDir = async ({ entry, templateName, customFile, }) => {
                 const value = templateObj[key];
                 const hasFiles = typeof value === "object" &&
                     (value.files || value.paths || Object.keys(value).length > 0);
-                // Decide which icon to use: 📂 for folders with content, 📁 for empty
                 const icon = hasFiles ? "📂" : "📁";
                 console.log(`${indentStr}${icon} ${key}/`);
-                if (typeof value === "object") {
-                    preview(value, indent + 1, key);
-                }
+                if (typeof value === "object")
+                    preview(value, indent + 1);
             }
         }
     }
