@@ -8,10 +8,12 @@
  * @param {string} [options.customFile] - The path to a custom template file.
  * @param {boolean} [options.interactive] - Whether to use interactive mode.
  */
-export declare const scaffoldDir: ({ entry, templateName, customFile, interactive, }: {
+export declare const scaffoldDir: ({ entry, templateName, customFile, interactive, non_interactive, force, }: {
     entry?: string;
     templateName?: string;
     customFile?: string;
     interactive?: boolean;
+    non_interactive?: boolean;
+    force?: boolean;
 }) => Promise<void>;
 //# sourceMappingURL=scaffold-dir.d.ts.map

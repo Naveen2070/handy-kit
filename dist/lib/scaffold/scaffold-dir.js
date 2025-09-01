@@ -16,27 +16,38 @@ const __dirname = path.dirname(__filename);
  * @param {string} [options.customFile] - The path to a custom template file.
  * @param {boolean} [options.interactive] - Whether to use interactive mode.
  */
-export const scaffoldDir = async ({ entry, templateName, customFile, interactive = false, }) => {
+export const scaffoldDir = async ({ entry, templateName, customFile, interactive = false, non_interactive = false, force = false, }) => {
+    // 1. ENTRY
     if (!entry) {
+        if (non_interactive) {
+            console.error("❌ Entry folder is required in non-interactive mode.");
+            return;
+        }
         entry = (await askUser("Enter entry folder (default 'src'): ")) || "src";
     }
     let template;
     const defaultTemplateDir = path.resolve(__dirname, "../../assets/templates/dir");
     const userTemplateDir = path.resolve(os.homedir(), ".scaffold-cli/templates/dir");
     await fs.mkdir(userTemplateDir, { recursive: true });
+    // 2. INTERACTIVE MODE
     if (interactive) {
-        // 👨‍🎨 Interactive flow
+        if (non_interactive) {
+            console.error("❌ Cannot use interactive mode in non-interactive mode.");
+            return;
+        }
         template = await runInteractiveWizard();
-        const save = await askUser("Save this structure as a reusable template? [y/N]: ");
-        if (["y", "yes"].includes(save.toLowerCase())) {
-            const name = await askUser("Enter template name (e.g. my-template): ");
-            const savePath = path.resolve(userTemplateDir, `${name}.json`);
-            await fs.writeFile(savePath, JSON.stringify(template, null, 2), "utf8");
-            console.log(`✅ Template saved at ${savePath}`);
+        if (!non_interactive) {
+            const save = await askUser("Save this structure as a reusable template? [y/N]: ");
+            if (["y", "yes"].includes(save.toLowerCase())) {
+                const name = await askUser("Enter template name (e.g. my-template): ");
+                const savePath = path.resolve(userTemplateDir, `${name}.json`);
+                await fs.writeFile(savePath, JSON.stringify(template, null, 2), "utf8");
+                console.log(`✅ Template saved at ${savePath}`);
+            }
         }
     }
+    // 3. CUSTOM FILE
     else if (customFile) {
-        // 📄 Load from custom file
         try {
             const fileContent = await fs.readFile(path.resolve(customFile), "utf-8");
             template = JSON.parse(fileContent);
@@ -46,8 +57,8 @@ export const scaffoldDir = async ({ entry, templateName, customFile, interactive
             return;
         }
     }
+    // 4. TEMPLATE SELECTION
     else {
-        // 📦 Select from templates (default + user + interactive)
         const [defaultTemplates, userTemplates] = await Promise.all([
             fs.readdir(defaultTemplateDir),
             fs.readdir(userTemplateDir),
@@ -64,19 +75,23 @@ export const scaffoldDir = async ({ entry, templateName, customFile, interactive
                 path: path.join(userTemplateDir, name),
             })),
         ];
-        const templateOptions = [
-            ...allTemplates.map((t, i) => ({
-                label: `${i + 1}. ${t.type === "user" ? "📦 user" : "📦 default"} - ${t.name.replace(".json", "")}`,
-                value: t.name.replace(".json", ""),
-                index: i,
-            })),
-            {
-                label: `${allTemplates.length + 1}. 🎨 interactive - create from scratch`,
-                value: "interactive",
-                index: allTemplates.length,
-            },
-        ];
         if (!templateName) {
+            if (non_interactive) {
+                console.error("❌ Template name is required in non-interactive mode.");
+                return;
+            }
+            const templateOptions = [
+                ...allTemplates.map((t, i) => ({
+                    label: `${i + 1}. ${t.type === "user" ? "📦 user" : "📦 default"} - ${t.name.replace(".json", "")}`,
+                    value: t.name.replace(".json", ""),
+                    index: i,
+                })),
+                {
+                    label: `${allTemplates.length + 1}. 🎨 interactive - create from scratch`,
+                    value: "interactive",
+                    index: allTemplates.length,
+                },
+            ];
             const selection = await askUser(`Choose one of the following templates:\n${templateOptions
                 .map((opt) => opt.label)
                 .join("\n")}\nEnter template number or name: `);
@@ -88,7 +103,6 @@ export const scaffoldDir = async ({ entry, templateName, customFile, interactive
                 return;
             }
             if (selectedTemplate.value === "interactive") {
-                interactive = true;
                 template = await runInteractiveWizard();
                 const save = await askUser("Save this structure as a reusable template? [y/N]: ");
                 if (["y", "yes"].includes(save.toLowerCase())) {
@@ -125,7 +139,7 @@ export const scaffoldDir = async ({ entry, templateName, customFile, interactive
             }
         }
     }
-    // 🪟 Preview
+    // 5. PREVIEW
     function preview(templateObj, indent = 0) {
         const indentStr = "  ".repeat(indent);
         for (const key of Object.keys(templateObj)) {
@@ -163,16 +177,21 @@ export const scaffoldDir = async ({ entry, templateName, customFile, interactive
             }
         }
     }
-    console.log("\n🪟 Folder structure preview:");
-    preview(template);
-    console.log(`\nWill be created under: '${path.resolve(process.cwd(), entry)}'\n`);
-    const confirm = await askUser("Do you want to proceed? [y/N]: ");
-    if (!["y", "yes"].includes(confirm.toLowerCase())) {
-        console.log("❌ Aborted by user.");
-        return;
+    if (!non_interactive) {
+        console.log("\n🪟 Folder structure preview:");
+        preview(template);
+        console.log(`\nWill be created under: '${path.resolve(process.cwd(), entry)}'\n`);
+        if (!force) {
+            const confirm = await askUser("Do you want to proceed? [y/N]: ");
+            if (!["y", "yes"].includes(confirm.toLowerCase())) {
+                console.log("❌ Aborted by user.");
+                return;
+            }
+        }
     }
+    // 6. CREATE
     try {
-        await createFoldersFromTemplate(template, path.resolve(process.cwd(), entry));
+        await createFoldersFromTemplate(template, path.resolve(process.cwd(), entry), { force });
         console.log(`✅ Folder structure created at '${path.resolve(process.cwd(), entry)}'`);
     }
     catch (err) {

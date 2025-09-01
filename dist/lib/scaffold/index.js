@@ -23,11 +23,20 @@ export const scaffoldCommands = {
                 const customFile = flags["schema"] || flags["s"];
                 const interactive = flags["interactive"] || flags["i"];
                 const help = flags["help"] || flags["h"];
+                const non_interactive = flags["non-interactive"] || flags["n"];
+                const force = flags["force"] || flags["f"];
                 if (help) {
                     printTemplate("help.scaffold-dir");
                     process.exit(0);
                 }
-                await scaffoldDir({ entry, templateName, customFile, interactive });
+                await scaffoldDir({
+                    entry,
+                    templateName,
+                    customFile,
+                    interactive,
+                    non_interactive,
+                    force,
+                });
             },
         },
     ],

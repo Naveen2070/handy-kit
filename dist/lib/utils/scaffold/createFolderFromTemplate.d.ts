@@ -7,5 +7,7 @@
  * @param template The template schema for the folder structure.
  * @param entryPath The root directory where the structure should be created.
  */
-export declare function createFoldersFromTemplate(template: Record<string, any>, entryPath: string): Promise<void>;
+export declare function createFoldersFromTemplate(template: Record<string, any>, entryPath: string, options?: {
+    force?: boolean;
+}): Promise<void>;
 //# sourceMappingURL=createFolderFromTemplate.d.ts.map

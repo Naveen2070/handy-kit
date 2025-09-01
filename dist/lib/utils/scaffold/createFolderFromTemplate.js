@@ -9,7 +9,22 @@ import * as path from "path";
  * @param template The template schema for the folder structure.
  * @param entryPath The root directory where the structure should be created.
  */
-export async function createFoldersFromTemplate(template, entryPath) {
+export async function createFoldersFromTemplate(template, entryPath, options) {
+    const { force = false } = options || {};
+    /**
+     * Checks if a file exists at the given path.
+     * @param filePath The path of the file to check.
+     * @returns A promise that resolves to true if the file exists, false otherwise.
+     */
+    async function fileExists(filePath) {
+        try {
+            await fs.access(filePath);
+            return true;
+        }
+        catch {
+            return false;
+        }
+    }
     /**
      * Recursively creates a folder structure from the given template object.
      * If the property name is "files", it is handled as a special case:
@@ -27,17 +42,21 @@ export async function createFoldersFromTemplate(template, entryPath) {
         for (const key of Object.keys(obj)) {
             if (key === "files") {
                 const files = obj[key];
-                // 🔁 Handle special 'paths' entry (copy files)
+                // Handle file copies from paths
                 if (Array.isArray(files.paths)) {
                     for (const srcPath of files.paths) {
                         const fileName = path.basename(srcPath);
                         const destPath = path.join(basePath, fileName);
                         await fs.mkdir(path.dirname(destPath), { recursive: true });
+                        if (!force && (await fileExists(destPath))) {
+                            console.log(`⚠️ Skipped existing file (use --force to overwrite): ${destPath}`);
+                            continue;
+                        }
                         await fs.copyFile(srcPath, destPath);
                         console.log(`📄 Copied file: ${destPath}`);
                     }
                 }
-                // 🔁 Handle normal file definitions
+                // Handle inline file definitions
                 for (const fileName of Object.keys(files)) {
                     if (fileName === "paths")
                         continue;
@@ -46,7 +65,6 @@ export async function createFoldersFromTemplate(template, entryPath) {
                     let ext = "";
                     if (typeof file === "string") {
                         content = file;
-                        ext = "";
                     }
                     else if (typeof file === "object") {
                         content = file.content ?? "";
@@ -55,22 +73,28 @@ export async function createFoldersFromTemplate(template, entryPath) {
                     const fullFileName = `${fileName}${ext}`;
                     const destPath = path.join(basePath, fullFileName);
                     await fs.mkdir(path.dirname(destPath), { recursive: true });
+                    if (!force && (await fileExists(destPath))) {
+                        console.log(`⚠️ Skipped existing file (use --force to overwrite): ${destPath}`);
+                        continue;
+                    }
                     await fs.writeFile(destPath, content, "utf8");
                     console.log(`📄 Created file: ${destPath}`);
                 }
             }
             else if (key === "paths") {
-                // Create empty files
                 const paths = obj[key];
                 for (const relPath of paths) {
                     const fullPath = path.join(entryPath, relPath);
                     await fs.mkdir(path.dirname(fullPath), { recursive: true });
+                    if (!force && (await fileExists(fullPath))) {
+                        console.log(`⚠️ Skipped existing file (use --force to overwrite): ${fullPath}`);
+                        continue;
+                    }
                     await fs.writeFile(fullPath, "", "utf8");
                     console.log(`📄 Created empty file: ${fullPath}`);
                 }
             }
             else {
-                // It's a folder
                 const folderPath = path.join(basePath, key);
                 await fs.mkdir(folderPath, { recursive: true });
                 console.log(`📁 Created folder: ${folderPath}`);
