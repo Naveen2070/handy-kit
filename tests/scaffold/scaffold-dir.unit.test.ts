@@ -7,29 +7,29 @@ vi.mock("fs/promises");
 vi.mock("os", () => ({ homedir: () => "/home/test" }));
 
 // Mock internal utilities before import
-vi.mock("../src/lib/utils/common/index.js", async () => {
+vi.mock("../../src/lib/utils/common/index.js", async () => {
   return {
-    ...(await vi.importActual("../src/lib/utils/common/index.js")),
+    ...(await vi.importActual("../../src/lib/utils/common/index.js")),
     askUser: vi.fn(),
     printTemplate: vi.fn(),
   };
 });
 
-vi.mock("../src/lib/utils/scaffold/index.js", async () => {
+vi.mock("../../src/lib/utils/scaffold/index.js", async () => {
   return {
-    ...(await vi.importActual("../src/lib/utils/scaffold/index.js")),
+    ...(await vi.importActual("../../src/lib/utils/scaffold/index.js")),
     runInteractiveWizard: vi.fn(),
     createFoldersFromTemplate: vi.fn(),
   };
 });
 
 // Import AFTER mocks
-import { scaffoldDir } from "../src/lib/scaffold/scaffold-dir.js";
-import { askUser } from "../src/lib/utils/common/index.js";
+import { scaffoldDir } from "../../src/lib/scaffold/scaffold-dir.js";
+import { askUser } from "../../src/lib/utils/common/index.js";
 import {
   runInteractiveWizard,
   createFoldersFromTemplate,
-} from "../src/lib/utils/scaffold/index.js";
+} from "../../src/lib/utils/scaffold/index.js";
 
 describe("scaffoldDir (unit)", () => {
   beforeEach(() => {
