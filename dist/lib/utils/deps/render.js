@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import path from "path";
 import { formatSize } from "./fileUtils.js";
 // Calculate total size including nested deps
 function calcTotalSize(data) {
@@ -86,9 +87,13 @@ function renderTable(title, section) {
     }
     console.log(output);
 }
-// Export results to file in various formats
-export async function exportResults(results, format, flags) {
-    const outFile = `deps-size.${format}`;
+export async function exportResults(results, exportPath, flags) {
+    // Resolve to absolute path from current working directory
+    const resolvedPath = path.isAbsolute(exportPath)
+        ? exportPath
+        : path.resolve(process.cwd(), exportPath);
+    const ext = path.extname(resolvedPath).slice(1).toLowerCase(); // e.g. 'json', 'txt', 'md'
+    const format = ext || "json";
     let content = "";
     const depsTotal = getSectionTotalSize(results.dependencies);
     const devDepsTotal = getSectionTotalSize(results.devDependencies);
@@ -139,7 +144,6 @@ export async function exportResults(results, format, flags) {
             content += "\nDevDependencies:\n";
             content += toText(results.devDependencies);
         }
-        // Append total sizes
         content += `\n📦 Total Dependency Size: ${formatSize(depsTotal)}\n`;
         content += `🧪 Total DevDependency Size: ${formatSize(devDepsTotal)}\n`;
         content += `📂 Total node_modules Size: ${formatSize(overallTotal)}\n`;
@@ -157,12 +161,15 @@ export async function exportResults(results, format, flags) {
         content += toMarkdown(results.dependencies);
         content += "\n## DevDependencies\n";
         content += toMarkdown(results.devDependencies);
-        // Totals
         content += `\n**📦 Total Dependency Size**: ${formatSize(depsTotal)}\n`;
         content += `**🧪 Total DevDependency Size**: ${formatSize(devDepsTotal)}\n`;
         content += `**📂 Total node_modules Size**: ${formatSize(overallTotal)}\n`;
     }
-    await fs.writeFile(outFile, content, "utf8");
-    console.log(`\n✅ Exported to ${outFile}`);
+    else {
+        throw new Error(`❌ Unsupported export format: ${format}`);
+    }
+    await fs.mkdir(path.dirname(resolvedPath), { recursive: true });
+    await fs.writeFile(resolvedPath, content, "utf8");
+    console.log(`\n✅ Exported to ${resolvedPath}`);
 }
 //# sourceMappingURL=render.js.map

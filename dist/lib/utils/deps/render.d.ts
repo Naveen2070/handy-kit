@@ -9,7 +9,7 @@ export declare function renderDeps(results: {
 export declare function exportResults(results: {
     dependencies: Record<string, any>;
     devDependencies: Record<string, any>;
-}, format: string, flags?: {
+}, exportPath: string, flags?: {
     table?: boolean;
 }): Promise<void>;
 //# sourceMappingURL=render.d.ts.map

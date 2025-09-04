@@ -20,41 +20,56 @@ export function getImportsBabel(
   const imports: { importedNames: string[]; moduleSpecifier: string }[] = [];
 
   traverse.default.default(ast, {
-    /**
-     * Called for each `import` statement.
-     * @param {object} path
-     */
     ImportDeclaration(path: any) {
       const { node } = path;
       const importedNames: string[] = [];
 
-      // Go through each import specifier
       node.specifiers.forEach((spec: any) => {
-        if (spec.type === "ImportDefaultSpecifier")
+        if (spec.type === "ImportDefaultSpecifier") {
           importedNames.push("default");
-        else if (spec.type === "ImportSpecifier")
+        } else if (spec.type === "ImportSpecifier") {
           importedNames.push(spec.imported.name);
-        else if (spec.type === "ImportNamespaceSpecifier")
+        } else if (spec.type === "ImportNamespaceSpecifier") {
           importedNames.push("*");
+        }
       });
 
-      // Add the imported names and module specifier to the array
-      imports.push({ importedNames, moduleSpecifier: node.source.value });
+      imports.push({
+        importedNames,
+        moduleSpecifier: node.source.value,
+      });
     },
-    /**
-     * Called for each `require` function call.
-     * @param {object} path
-     */
+
+    // ✅ Add support for `export { x } from './y'` and `export * from './y'`
+    ExportNamedDeclaration(path: any) {
+      const { node } = path;
+      if (node.source) {
+        const importedNames = node.specifiers.map(
+          (spec: any) => spec.exported.name
+        );
+        imports.push({
+          importedNames,
+          moduleSpecifier: node.source.value,
+        });
+      }
+    },
+
+    ExportAllDeclaration(path: any) {
+      const { node } = path;
+      imports.push({
+        importedNames: ["*"],
+        moduleSpecifier: node.source.value,
+      });
+    },
+
     CallExpression(path: any) {
       const { node } = path;
-      // Check if the function call is a `require` call
       if (
         node.callee.type === "Identifier" &&
         node.callee.name === "require" &&
         node.arguments.length === 1 &&
         node.arguments[0].type === "StringLiteral"
       ) {
-        // Add the imported names and module specifier to the array
         imports.push({
           importedNames: ["*"],
           moduleSpecifier: node.arguments[0].value,
@@ -82,17 +97,16 @@ export function getImportsTS(
   const imports: { importedNames: string[]; moduleSpecifier: string }[] = [];
 
   sourceFile.forEachChild((node) => {
-    // import statements
+    // Handle standard import declarations
     if (ts.isImportDeclaration(node)) {
       const importedNames: string[] = [];
       const moduleSpecifier = (node.moduleSpecifier as ts.StringLiteral).text;
 
-      // default imports
-      if (node.importClause && node.importClause.name) {
+      if (node.importClause?.name) {
         importedNames.push("default");
       }
-      // named imports
-      if (node.importClause && node.importClause.namedBindings) {
+
+      if (node.importClause?.namedBindings) {
         if (ts.isNamedImports(node.importClause.namedBindings)) {
           node.importClause.namedBindings.elements.forEach((elem) => {
             importedNames.push(elem.name.text);
@@ -105,7 +119,28 @@ export function getImportsTS(
       imports.push({ importedNames, moduleSpecifier });
     }
 
-    // require('module')
+    // ✅ Handle re-exports like `export { a } from './a'`
+    if (
+      ts.isExportDeclaration(node) &&
+      node.moduleSpecifier &&
+      ts.isStringLiteral(node.moduleSpecifier)
+    ) {
+      const moduleSpecifier = node.moduleSpecifier.text;
+      const importedNames: string[] = [];
+
+      if (node.exportClause && ts.isNamedExports(node.exportClause)) {
+        node.exportClause.elements.forEach((elem) => {
+          importedNames.push(elem.name.text);
+        });
+      } else {
+        // export * from './a'
+        importedNames.push("*");
+      }
+
+      imports.push({ importedNames, moduleSpecifier });
+    }
+
+    // Handle `const x = require('...')`
     if (ts.isVariableStatement(node)) {
       node.declarationList.declarations.forEach((decl) => {
         if (

@@ -53,7 +53,7 @@ export async function licenseGen(type, author, outputPath = "LICENSE", force = f
     try {
         if (force) {
             await fs.writeFile(outputPath, content);
-            printTemplate("success.licenseReplaced", { type, author, outputPath });
+            printTemplate("success.licenseCreated", { type, author, outputPath });
             return;
         }
         // check if output file already exists and ask user what to do

@@ -4,9 +4,9 @@ import fs from "fs-extra";
 import path from "path";
 import * as tempy from "tempy";
 
-const CLI_PATH = path.join(__dirname, "../dist/cli/index.js");
+const CLI_PATH = path.join(__dirname, "../../dist/cli/index.js");
 
-describe("scaffold dir CLI", () => {
+describe("scaffold dir", () => {
   let tempDir: string;
 
   beforeEach(() => {
