@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import path from "path";
 import { formatSize } from "./fileUtils.js";
 
 // Calculate total size including nested deps
@@ -127,16 +128,22 @@ function renderTable(title: string, section: Record<string, any>) {
   console.log(output);
 }
 
-// Export results to file in various formats
 export async function exportResults(
   results: {
     dependencies: Record<string, any>;
     devDependencies: Record<string, any>;
   },
-  format: string,
+  exportPath: string,
   flags?: { table?: boolean }
 ) {
-  const outFile = `deps-size.${format}`;
+  // Resolve to absolute path from current working directory
+  const resolvedPath = path.isAbsolute(exportPath)
+    ? exportPath
+    : path.resolve(process.cwd(), exportPath);
+
+  const ext = path.extname(resolvedPath).slice(1).toLowerCase(); // e.g. 'json', 'txt', 'md'
+  const format = ext || "json";
+
   let content = "";
 
   const depsTotal = getSectionTotalSize(results.dependencies);
@@ -150,7 +157,6 @@ export async function exportResults(
       function toTableText(res: Record<string, any>): string {
         const colWidths = [40, 15, 25];
         const headers = ["Package", "Size", "Total Size (incl. deps)"];
-
         let str =
           pad(headers[0]!, colWidths[0]!) +
           pad(headers[1]!, colWidths[1]!, "right") +
@@ -195,7 +201,6 @@ export async function exportResults(
       content += toText(results.devDependencies);
     }
 
-    // Append total sizes
     content += `\n📦 Total Dependency Size: ${formatSize(depsTotal)}\n`;
     content += `🧪 Total DevDependency Size: ${formatSize(devDepsTotal)}\n`;
     content += `📂 Total node_modules Size: ${formatSize(overallTotal)}\n`;
@@ -214,12 +219,15 @@ export async function exportResults(
     content += "\n## DevDependencies\n";
     content += toMarkdown(results.devDependencies);
 
-    // Totals
     content += `\n**📦 Total Dependency Size**: ${formatSize(depsTotal)}\n`;
     content += `**🧪 Total DevDependency Size**: ${formatSize(devDepsTotal)}\n`;
     content += `**📂 Total node_modules Size**: ${formatSize(overallTotal)}\n`;
+  } else {
+    throw new Error(`❌ Unsupported export format: ${format}`);
   }
 
-  await fs.writeFile(outFile, content, "utf8");
-  console.log(`\n✅ Exported to ${outFile}`);
+  await fs.mkdir(path.dirname(resolvedPath), { recursive: true });
+  await fs.writeFile(resolvedPath, content, "utf8");
+
+  console.log(`\n✅ Exported to ${resolvedPath}`);
 }
