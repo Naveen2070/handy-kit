@@ -1,21 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { execa } from "execa";
-import { setTimeout as delay } from "timers/promises";
 import fs from "fs-extra";
 import path from "path";
 import * as tempy from "tempy";
 
 const CLI_PATH = path.join(__dirname, "../../dist/cli/index.js");
-
-async function waitForFile(filePath: string, retries = 10, interval = 100) {
-  for (let i = 0; i < retries; i++) {
-    if (await fs.pathExists(filePath)) {
-      return true;
-    }
-    await delay(interval);
-  }
-  throw new Error(`File not created: ${filePath}`);
-}
 
 describe("code unused CLI", () => {
   let tempDir: string;

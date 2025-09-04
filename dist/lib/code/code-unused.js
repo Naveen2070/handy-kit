@@ -68,7 +68,7 @@ function scanFiles(allFiles) {
             exportMap.set(file, exports);
         }
     }
-    // Step 3: Extract Imports
+    // Step 3: Extract Imports AND Re-exports
     for (const [file, ast] of astCache.entries()) {
         const ext = path.extname(file);
         let imports = [];
@@ -167,27 +167,24 @@ export function findUnusedFiles(rootDir) {
     const allFiles = getAllFiles(absRoot).filter((file) => {
         const ext = path.extname(file);
         const base = path.basename(file);
-        return (
-        // Filter out declaration files
-        !file.endsWith(".d.ts") &&
-            // Filter out test files
+        return (!file.endsWith(".d.ts") &&
             !base.match(/\.test\.(ts|tsx|js|jsx)$/) &&
-            // Only consider files with supported extensions
             EXTENSIONS.includes(ext));
     });
-    // Populate usageMap by scanning all files
+    // Populate usageMap
     scanFiles(allFiles);
-    // Find all the imported files
     const importedFiles = new Set(usageMap.keys());
     const unusedFiles = [];
-    // Find all the unused files by iterating over all files and checking if they
-    // are in the importedFiles set
+    // ✅ Include entry points like index.ts as used
+    const entryPoints = allFiles.filter((file) => path.basename(file) === "index.ts");
+    entryPoints.forEach((file) => importedFiles.add(file));
+    // Detect unused files
     for (const file of allFiles) {
         if (!importedFiles.has(file)) {
             unusedFiles.push(file);
         }
     }
-    // If there are unused files, log them
+    // Report results
     if (unusedFiles.length > 0) {
         console.log("\n🚫 Unused Files Detected:");
         unusedFiles.forEach((file) => {
