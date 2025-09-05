@@ -28,7 +28,7 @@ export const GitCommands = {
                     !flags["weeks"] &&
                     !flags["months"] &&
                     !flags["years"]) {
-                    printTemplate("errors.missingDaysArg");
+                    printTemplate("errors.missingGitArgs");
                     process.exit(1);
                 }
                 const days = parseInt(flags["days"] || "0", 10);
