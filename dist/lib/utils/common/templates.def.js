@@ -15,6 +15,7 @@ Commands:
   handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--metric <commits|added|deleted>] [--export <md|json|txt>]
   handy-kit scaffold dir [--entry <folder>] [--template <name>] [--schema <path>]
   handy-kit deps size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]
+  handy-kit deps manage [--standard | --upgrade | --minor | --major] [--dry-run]
   handy-kit code unused [--path | -p] [--exports | -e] [--files | -f] [--help | -h]
   `,
         license: `Manage open-source licenses
@@ -110,9 +111,11 @@ Options:
 
 Subcommands:
   size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]   Show dependency sizes
+  manage [--standard | --upgrade | --minor | --major] [--dry-run]   Manage dependency versions
 
 Usage:
   handy-kit deps size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]
+  handy-kit deps manage [--standard | --upgrade | --minor | --major] [--dry-run]
   `,
         "deps-size": `Show dependency sizes
 
@@ -126,6 +129,15 @@ Options:
   --depth | -d     search depth level (default: 3)
   --concurrency | -c     concurrent file reads (default: 10)
   --export | -e     Export dependency sizes to a file
+    `,
+        "deps-manage": `Manage dependency versions
+
+Usage:
+  handy-kit deps manage [--standard | --upgrade | --minor | --major] [--dry-run]
+
+Options:
+  --standard | --upgrade | --minor | --major   Manage dependency versions
+  --dry-run   Preview changes without making them
     `,
         code: `Code related commands
 

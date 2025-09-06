@@ -4,7 +4,6 @@ import path from "path";
 import fs from "fs-extra";
 
 const CLI_PATH = path.join(__dirname, "../../dist/cli/index.js");
-
 const DIOR_PROJECT_PATH = path.resolve(__dirname, "../../");
 
 describe("deps CLI", () => {
@@ -13,6 +12,10 @@ describe("deps CLI", () => {
   beforeEach(() => {
     projectDir = DIOR_PROJECT_PATH;
   });
+
+  // ────────────────────────────────────────────
+  // Help Commands
+  // ────────────────────────────────────────────
 
   it("should show deps help", async () => {
     const result = await execa("node", [CLI_PATH, "deps", "help"]);
@@ -29,6 +32,18 @@ describe("deps CLI", () => {
     expect(result.stdout).toContain("Show dependency sizes");
     expect(result.stdout).toContain("deps size [--verbose");
   });
+
+  it("should show deps manage help", async () => {
+    const result = await execa("node", [CLI_PATH, "deps", "manage", "--help"]);
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Usage:");
+    expect(result.stdout).toContain("deps manage");
+  });
+
+  // ────────────────────────────────────────────
+  // deps size
+  // ────────────────────────────────────────────
 
   it("should run deps size without flags", async () => {
     const result = await execa("node", [CLI_PATH, "deps", "size"], {
@@ -80,5 +95,69 @@ describe("deps CLI", () => {
 
     // Clean up
     await fs.remove(exportPath);
+  });
+
+  // ────────────────────────────────────────────
+  // deps manage
+  // ────────────────────────────────────────────
+
+  it("should run deps manage with --standard and --dry-run", async () => {
+    const result = await execa(
+      "node",
+      [CLI_PATH, "deps", "manage", "--standard", "--dry-run"],
+      { cwd: projectDir }
+    );
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toMatch(
+      /Dry-run: The following packages would be updated|All dependencies are up to date/i
+    );
+  }, 20_000);
+
+  it("should run deps manage with --upgrade and --dry-run (alias of --standard)", async () => {
+    const result = await execa(
+      "node",
+      [CLI_PATH, "deps", "manage", "--upgrade", "--dry-run"],
+      { cwd: projectDir }
+    );
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toMatch(
+      /Dry-run: The following packages would be updated|All dependencies are up to date/i
+    );
+  }, 20_000);
+
+  it("should run deps manage with --minor and --dry-run", async () => {
+    const result = await execa(
+      "node",
+      [CLI_PATH, "deps", "manage", "--minor", "--dry-run"],
+      { cwd: projectDir }
+    );
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toMatch(
+      /Dry-run: The following packages would be upgraded \(minor\)|All dependencies are up to date/i
+    );
+  }, 20_000);
+
+  it("should run deps manage with --major and --dry-run", async () => {
+    const result = await execa(
+      "node",
+      [CLI_PATH, "deps", "manage", "--major", "--dry-run"],
+      { cwd: projectDir }
+    );
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toMatch(
+      /Dry-run: The following packages would be upgraded \(major\)|All dependencies are up to date/i
+    );
+  }, 20_000);
+
+  it("should fallback to interactive mode if no upgrade flag is passed", async () => {
+    const { stdout } = await execa("node", [CLI_PATH, "deps", "manage"], {
+      cwd: projectDir,
+      input: "4\n",
+    });
+    expect(stdout).toMatch(/Choose upgrade type:/i);
   });
 });
