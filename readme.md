@@ -245,6 +245,27 @@ handy-kit deps size --table --export report.md
 handy-kit deps size --verbose --export report.json
 ```
 
+#### Dependency Management
+
+Manage dependency versions.
+
+```bash
+handy-kit deps manage [--standard | --upgrade | --minor | --major] [--dry-run]
+```
+
+**Options:**
+
+- `--upgrade | --standard` : Upgrade all dependencies to their latest versions
+- `--minor` : Upgrade all dependencies to their latest minor versions
+- `--major` : Upgrade all dependencies to their latest major versions
+
+**Example:**
+
+```bash
+handy-kit deps manage --standard
+handy-kit deps manage --minor --dry-run
+```
+
 ---
 
 ### Code
@@ -324,14 +345,20 @@ Generated licenses and credits can be freely applied to your projects.
 
 ## Roadmap
 
-Planned features and improvements for future releases:
+### ✅ Delivered in Latest Version
+
+- **Interactive scaffold mode** — guided prompts to build directory structures interactively instead of only from templates.
+- **Comprehensive testing** — initial test coverage across all commands and subcommands.
+- **New `deps manage` command** — upgrade all dependencies with `--upgrade`, `--minor`, or `--major`.
+
+### 🚀 Upcoming Features
 
 - **Output formatting templates** — customizable layouts for `deps tree`, `deps table`, and Git charts.
 - **Richer code quality checks** — extend `code` group with detection for unused imports, circular dependencies, and complexity reports.
-- **Interactive scaffold mode** — guided prompts to build directory structures interactively instead of only from templates.
-- **Comprehensive testing** — add test coverage across all commands and subcommands.
+- **Interactive reports** — rich TUI (terminal UI) dashboards for Git stats, dependency sizes, and code analysis.
+- **Dependency management enhancements** — extend `deps manage` with selective upgrades (per dependency), safe rollback, and lockfile sync.
+- **Performance profiling tools** — commands to analyze bundle size, build time, and runtime hotspots.
+- **Project health reports** — a single command to combine git stats, dependency insights, and code quality checks into a summary dashboard.
 - **Library quality improvements** — ongoing enhancements to performance, stability, and developer experience.
-
-Have more ideas? Open an issue or contribute!
 
 ---
