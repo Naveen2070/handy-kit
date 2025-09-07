@@ -17,6 +17,7 @@ A modular CLI tool for developers — manage licenses, analyze Git activity, ins
     - [Create Directory Structure](#create-directory-structure)
   - [Deps](#deps)
     - [Dependency Size](#dependency-size)
+    - [Dependency Management](#dependency-management)
   - [Code](#code)
     - [Unused Exports & Files](#unused-exports--files)
 

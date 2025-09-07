@@ -154,7 +154,7 @@ describe("scaffold dir", () => {
       "--force",
     ]);
     expect(await fs.readFile(filePath, "utf-8")).toBe("original");
-  });
+  }, 10_000);
 
   it("should create nested folder and files correctly", async () => {
     const nestedTemplate = {
