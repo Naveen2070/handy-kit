@@ -34,7 +34,7 @@ export const GitCommands: CommandGroup = {
           !flags["months"] &&
           !flags["years"]
         ) {
-          printTemplate("errors.missingDaysArg");
+          printTemplate("errors.missingGitArgs");
           process.exit(1);
         }
 
