@@ -14,7 +14,7 @@ export default defineConfig({
     environment: "node",
     ui: true,
     bail: 5,
-    watch: true,
+    // watch: true,
   },
   cacheDir: "./node_modules/.vitest",
 });
