@@ -40,3 +40,26 @@
 - Improved help messages for `scaffold` and `git` commands.
 
 ---
+
+## v0.4.4 (2025-09-07)
+
+### ✨ New Features
+
+- **Deps Group**
+
+  - Added `deps manage` command to handle dependency version upgrades with support for standard, minor, and major updates.
+  - Implemented interactive upgrade type selection for a smoother user experience.
+  - Added dry-run preview functionality to review changes before applying them.
+
+### 🛠 Improvements
+
+- Improved CLI error messaging for missing Git arguments, making issues easier to diagnose.
+- Updated project dependencies to their latest versions.
+- Enhanced help documentation for the new `deps manage` command.
+
+### 🧪 Tests
+
+- Added tests for Git CLI functionalities and the new dependency management features.
+- Integrated Vitest configuration for improved testing workflows.
+
+---
