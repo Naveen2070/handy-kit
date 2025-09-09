@@ -35,6 +35,7 @@ export declare function getDiffPreview(): {
  *
  * @param filePath The path to the markdown file to write.
  * @param data The data to write to the markdown file.
+ * @param noEmoji If true, the emoji characters will be replaced with their fallback strings.
  */
 export declare function exportMarkdown(filePath: string, data: {
     branch: string;
@@ -44,5 +45,5 @@ export declare function exportMarkdown(filePath: string, data: {
     diff: string;
     truncated: boolean;
     diffLines: number;
-}): void;
+}, noEmoji?: boolean): void;
 //# sourceMappingURL=reviewUtils.d.ts.map

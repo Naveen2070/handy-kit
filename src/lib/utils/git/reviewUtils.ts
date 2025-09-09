@@ -116,6 +116,7 @@ export function getDiffPreview(): {
  *
  * @param filePath The path to the markdown file to write.
  * @param data The data to write to the markdown file.
+ * @param noEmoji If true, the emoji characters will be replaced with their fallback strings.
  */
 export function exportMarkdown(
   filePath: string,
@@ -127,45 +128,63 @@ export function exportMarkdown(
     diff: string;
     truncated: boolean;
     diffLines: number;
-  }
+  },
+  noEmoji = false
 ): void {
+  /**
+   * Returns the fallback string for the given emoji character if noEmoji is true, otherwise the emoji character itself.
+   */
+  const e = (emoji: string, fallback: string) => (noEmoji ? fallback : emoji);
+
+  /**
+   * The lines of the markdown file to be written.
+   */
   const lines = [
-    "# 🔍 Git Review Summary",
+    `# ${e("🔍", "")} Git Review Summary`,
     "",
-    "## 📎 Branch Info",
+    "## Branch Info",
     `- **Branch**: \`${data.branch}\``,
     `- **Tracking**: ${
       data.tracking ? `\`${data.tracking}\`` : "**(no upstream set)**"
     }`,
-    data.tracking
-      ? ""
-      : `> ⚠️ This branch has no upstream.\n> \`git push --set-upstream origin ${data.branch}\``,
+    !data.tracking
+      ? `> ${e(
+          "⚠️",
+          "!"
+        )} This branch has no upstream.\n> \`git push --set-upstream origin ${
+          data.branch
+        }\``
+      : "",
     "",
-    "## 🔼 Unpushed Commits",
-    data.unpushed || "✅ No unpushed commits",
+    "## Unpushed Commits",
+    data.unpushed || `${e("✅", "✔")} No unpushed commits`,
     "",
-    "## 📂 Staged Files",
-    data.staged || "✅ No staged files",
+    "## Staged Files",
+    data.staged || `${e("✅", "✔")} No staged files`,
     "",
-    "## 📄 Diff Preview",
+    "## Diff Preview",
     data.diff
       ? [
           data.truncated
-            ? `⚠️ Large diff (${data.diffLines} lines). Showing first 100 lines:\n`
+            ? `${e("⚠️", "!")} Large diff (${
+                data.diffLines
+              } lines). Showing first 100 lines:\n`
             : "",
           "```diff",
           data.diff,
           "```",
           data.truncated ? "\n...diff truncated." : "",
         ].join("\n")
-      : "✅ No staged changes to show",
+      : `${e("✅", "✔")} No staged changes to show`,
     "",
-    "✅ Review complete!",
+    `${e("✅", "✔")} Review complete!`,
   ].join("\n");
 
   try {
     fs.writeFileSync(filePath, lines, "utf-8");
-    console.log(colorize(`📁 Exported review summary to ${filePath}`, "green"));
+    console.log(
+      colorize(`📁 Exported markdown summary to ${filePath}`, "green")
+    );
   } catch (err) {
     console.error(colorize(`❌ Failed to write export file: ${err}`, "red"));
   }

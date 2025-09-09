@@ -69,10 +69,23 @@ export const GitCommands = {
         {
             name: "review",
             description: "Show a pre-PR review summary",
-            usage: "git review --export <path> --help",
+            usage: "git review [--export | -e <path>] [--format json] [--timestamp] [--summary] [--no-emoji] [--help | -h]",
             run: async (_, flags) => {
                 const { gitReview } = await import("./git-review.js");
                 gitReview(_, flags);
+            },
+        },
+        {
+            name: "blame",
+            description: "Lightweight blame summary of who touched which files most",
+            usage: "git blame [--top <N>] [--file <file>] [--json] [--min <n>] [--brief] [--summary] [--export <path>] [--help | -h]",
+            run: async (_, flags) => {
+                if (flags["help"] || flags["h"]) {
+                    printTemplate("help.git-blame");
+                    process.exit(0);
+                }
+                const { gitBlameSummary } = await import("./git-blame.js");
+                gitBlameSummary(flags);
             },
         },
     ],

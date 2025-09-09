@@ -64,3 +64,25 @@ export type DependencyInfo = {
   "depended by"?: string;
   type?: string;
 };
+
+export interface GitBlameFlags {
+  top?: string;
+  file?: string;
+  json?: boolean;
+  min?: string;
+  brief?: boolean;
+  summary?: boolean;
+  export?: string;
+}
+
+export interface Contributor {
+  author: string;
+  lines: number;
+  percent: number;
+}
+
+export interface BlameResult {
+  totalLines: number;
+  contributors: Contributor[];
+  briefOutput?: string[];
+}

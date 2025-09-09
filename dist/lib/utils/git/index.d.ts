@@ -1,3 +1,4 @@
 import { exportMarkdown, getBranchInfo, getDiffPreview, getStagedFiles, getUnpushedCommits } from "./reviewUtils.js";
-export { exportMarkdown, getBranchInfo, getDiffPreview, getStagedFiles, getUnpushedCommits, };
+import { parseBlameOutput, formatDetailedSummaryOutput, formatOutput, generateMarkdownResults, generateMarkdownSummary, getFilesToAnalyze } from "./blameUtils.js";
+export { exportMarkdown, getBranchInfo, getDiffPreview, getStagedFiles, getUnpushedCommits, parseBlameOutput, formatDetailedSummaryOutput, formatOutput, generateMarkdownResults, generateMarkdownSummary, getFilesToAnalyze, };
 //# sourceMappingURL=index.d.ts.map

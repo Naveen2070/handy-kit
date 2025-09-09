@@ -61,10 +61,14 @@ Options:
 Subcommands:
   standup [options]   Show git commits from the last n days/weeks/months/years
   stats [options]    Show git status from the last n days/weeks/months
+  review [options]   Show git review
+  blame [options]    Lightweight blame summary of who touched which files most
 
 Usage:
   handy-kit git standup --days <n>
   handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--metric <commits|added|deleted>] [--export <md|json|txt>]
+  handy-kit git review [--export | -e <path>] [--format json] [--timestamp] [--summary] [--no-emoji] [--help | -h]
+  handy-kit git blame [--top <N>] [--file <file>] [--json] [--min <n>] [--brief]  [--summary] [--export <path>] [--help | -h]
   `,
 
     "git-standup": `Show git commits from the last n days/weeks/months/years
@@ -97,6 +101,36 @@ Options:
   --export <format>  Export commits to a file(supported: md, json, txt)
     `,
 
+    "git-review": `Show git review (like a pre-PR summary)
+
+Usage:
+  handy-kit git review [--export | -e <path>] [--format json] [--timestamp] [--summary] [--no-emoji] [--help | -h]
+
+Options:
+  --export <path>  Export review to a file
+  --format json    Format review as json
+  --timestamp      Show timestamp in review
+  --summary        Show summary in review
+  --no-emoji       Don't use emoji in review
+  --help           Show this help message
+    `,
+
+    "git-blame": `Lightweight blame summary of who touched which files most
+
+Usage:
+  handy-kit git blame [--top <N>] [--file <file>] [--json] [--min <n>] [--brief] [--summary] [--export <path>] [--help | -h]
+
+Options:
+  --top <N>      Show top N contributors (default: 1)
+  --file <file>  Show blame summary for a specific file
+  --json         Output blame summary as json
+  --min <n>      Show only contributors with at least n lines (default: 0)
+  --brief        Show per file blame summary for a specific file
+  --summary      Show summary of contributions across all files
+  --export <path>  Export blame summary to a file
+  --help         Show this help message
+    `,
+
     scaffold: `Scaffold repeatable structures
 
 Subcommands:
@@ -121,11 +155,13 @@ Subcommands:
   size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]   Show dependency sizes
   manage [--standard | --upgrade | --minor | --major] [--dry-run]   Manage dependency versions
   outdated [--json | -j] [--major-only | -m] [--export <file>] [--help | -h]   Show outdated dependencies
+  audit [--json | -j] [--summary | -s] [--export <file>]   Show security vulnerabilities
 
 Usage:
   handy-kit deps size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]
   handy-kit deps manage [--standard | --upgrade | --minor | --major] [--dry-run]
   handy-kit deps outdated [--json | -j] [--major-only | -m] [--export <file>] [--help | -h]
+  handy-kit deps audit [--json | -j] [--summary | -s] [--export <file>]
   `,
     "deps-size": `Show dependency sizes
 
@@ -159,6 +195,16 @@ Options:
   --major-only | -m   Only show dependencies with major version updates
   --export <file> | -e   Export the results to a specified file
   --help | -h   Show this help message
+    `,
+    "deps-audit": `Show security vulnerabilities
+
+Usage:
+  handy-kit deps audit [--json | -j] [--summary | -s] [--export <file>]
+
+Options:
+  --json | -j     Output the results in JSON format
+  --summary | -s   Show summary of vulnerabilities
+  --export <file> | -e   Export the results to a specified file
     `,
 
     code: `Code related commands
