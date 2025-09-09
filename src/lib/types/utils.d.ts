@@ -55,3 +55,12 @@ export type DepsSizeFlag = {
   depth: number;
   concurrency: number;
 };
+
+export type DependencyInfo = {
+  current: string;
+  wanted: string;
+  latest: string;
+  location?: string;
+  "depended by"?: string;
+  type?: string;
+};
