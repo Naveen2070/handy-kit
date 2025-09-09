@@ -1,8 +1,5 @@
 import { askUser } from "../utils/common/index.js";
 import { printTemplate } from "../utils/common/templates.js";
-import { manageDependencies, showOutdatedPackages } from "./deps-manage.js";
-import { handleOutdatedDepsCommand } from "./deps-outdated.js";
-import { getDepsSize } from "./deps-size.js";
 export const DepsCommands = {
     name: "deps",
     description: "Dependency related commands",
@@ -40,6 +37,7 @@ export const DepsCommands = {
                     concurrency,
                     export: exportFormat,
                 };
+                const { getDepsSize } = await import("./deps-size.js");
                 await getDepsSize(DepsFlag);
             },
         },
@@ -59,6 +57,7 @@ export const DepsCommands = {
                     process.exit(0);
                 }
                 console.log("\n📦 Checking for outdated packages...\n");
+                const { showOutdatedPackages, manageDependencies } = await import("./deps-manage.js");
                 await showOutdatedPackages();
                 // Determine upgradeType from flags if present
                 let upgradeType = null;
@@ -106,7 +105,17 @@ export const DepsCommands = {
             description: "List outdated dependencies with available updates",
             usage: "deps outdated [--json | -j] [--major-only | -m] [--export <file>] [--help | -h]",
             run: async (_, flags) => {
+                const { handleOutdatedDepsCommand } = await import("./deps-outdated.js");
                 await handleOutdatedDepsCommand(_, flags);
+            },
+        },
+        {
+            name: "audit",
+            description: "Basic security checks (via npm audit)",
+            usage: "deps audit [--json | -j] [--summary | -s] [--export <file>]",
+            run: async (_, flags) => {
+                const { handleAuditDepsCommand } = await import("./deps-audit.js");
+                await handleAuditDepsCommand(_, flags);
             },
         },
     ],
