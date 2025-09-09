@@ -2,6 +2,7 @@ import type { CommandGroup, DepsSizeFlag } from "../types/utils.js";
 import { askUser } from "../utils/common/index.js";
 import { printTemplate } from "../utils/common/templates.js";
 import { manageDependencies, showOutdatedPackages } from "./deps-manage.js";
+import { handleOutdatedDepsCommand } from "./deps-outdated.js";
 import { getDepsSize } from "./deps-size.js";
 
 export const DepsCommands: CommandGroup = {
@@ -114,6 +115,15 @@ export const DepsCommands: CommandGroup = {
 
           await manageDependencies(upgradeType, dryRun);
         }
+      },
+    },
+    {
+      name: "outdated",
+      description: "List outdated dependencies with available updates",
+      usage:
+        "deps outdated [--json | -j] [--major-only | -m] [--export <file>] [--help | -h]",
+      run: async (_, flags) => {
+        await handleOutdatedDepsCommand(_, flags);
       },
     },
   ],

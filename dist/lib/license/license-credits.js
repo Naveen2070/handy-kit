@@ -11,15 +11,22 @@ const LICENSE_URLS = {
     isc: "https://opensource.org/licenses/ISC",
     "lgpl-3.0": "https://www.gnu.org/licenses/lgpl-3.0.html",
 };
+/**
+ * Generate a credits file with all used libraries and their licenses
+ * @param outputPath The path to write the credits file to
+ */
 export async function generateCredits(outputPath) {
     try {
+        // Read package.json
         const pkgJsonPath = path.resolve(process.cwd(), "package.json");
         const pkgJsonRaw = await fs.readFile(pkgJsonPath, "utf-8");
         const pkg = JSON.parse(pkgJsonRaw);
+        // Collect dependencies
         const dependencies = { ...pkg.dependencies, ...pkg.devDependencies };
         const credits = [];
         for (const dep of Object.keys(dependencies)) {
             try {
+                // Read the package.json of each dependency
                 const depPkgPath = path.resolve(process.cwd(), "node_modules", dep, "package.json");
                 const depPkgRaw = await fs.readFile(depPkgPath, "utf-8");
                 const depPkg = JSON.parse(depPkgRaw);
@@ -31,6 +38,8 @@ export async function generateCredits(outputPath) {
                 });
             }
             catch {
+                // If the package.json cannot be read, use the name and version from the
+                // dependencies list
                 credits.push({
                     name: dep,
                     version: dependencies[dep],
@@ -55,6 +64,7 @@ export async function generateCredits(outputPath) {
             }
             md += "\n";
         }
+        // Write the credits file
         await fs.writeFile(outputPath, md);
         console.log(`✅ Credits file generated at ${outputPath}`);
     }

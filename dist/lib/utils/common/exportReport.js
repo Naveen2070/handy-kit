@@ -1,18 +1,31 @@
 import fs from "fs";
 import path from "path";
+/**
+ * Exports the report to a file in the specified format.
+ *
+ * @param stats - A JSON object with the report data.
+ * @param flags - An object with the following properties:
+ *   - `export`: The format to export the report in (json, txt, or md).
+ * @param contributors - A Set containing the contributors to the report.
+ */
 export function exportReport(stats, flags, contributors) {
     const filenameBase = `git-report-${new Date().toISOString().split("T")[0]}`;
     const outputDir = "./exported-reports";
     if (!fs.existsSync(outputDir))
         fs.mkdirSync(outputDir);
+    // Determine which output format to use
     switch (flags.export) {
         case "json": {
+            // Export to JSON
             const outputPath = path.join(outputDir, `${filenameBase}.json`);
-            fs.writeFileSync(outputPath, JSON.stringify({ contributors: Array.from(contributors), stats }, null, 2));
+            fs.writeFileSync(outputPath, 
+            // Use JSON.stringify to pretty-print the report
+            JSON.stringify({ contributors: Array.from(contributors), stats }, null, 2));
             console.log(`✅ JSON report saved to ${outputPath}`);
             break;
         }
         case "txt": {
+            // Export to plain text
             const lines = [];
             lines.push(`GIT REPORT (${new Date().toDateString()})`);
             lines.push(`Contributors: ${contributors.size}`);
@@ -36,6 +49,7 @@ export function exportReport(stats, flags, contributors) {
             break;
         }
         case "md": {
+            // Export to Markdown
             const lines = [];
             lines.push(`# 🧾 Git Contribution Report\n`);
             lines.push(`- 📅 Since: ${flags.since || "Beginning of repo"}`);

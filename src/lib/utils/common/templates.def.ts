@@ -120,10 +120,12 @@ Options:
 Subcommands:
   size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]   Show dependency sizes
   manage [--standard | --upgrade | --minor | --major] [--dry-run]   Manage dependency versions
+  outdated [--json | -j] [--major-only | -m] [--export <file>] [--help | -h]   Show outdated dependencies
 
 Usage:
   handy-kit deps size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]
   handy-kit deps manage [--standard | --upgrade | --minor | --major] [--dry-run]
+  handy-kit deps outdated [--json | -j] [--major-only | -m] [--export <file>] [--help | -h]
   `,
     "deps-size": `Show dependency sizes
 
@@ -147,6 +149,16 @@ Usage:
 Options:
   --standard | --upgrade | --minor | --major   Manage dependency versions
   --dry-run   Preview changes without making them
+    `,
+    "deps-outdated": `Show outdated dependencies
+
+Usage:
+  handy-kit deps outdated [--json | -j] [--major-only | -m] [--export <file>] [--help | -h]
+Options:
+  --json | -j     Output the results in JSON format
+  --major-only | -m   Only show dependencies with major version updates
+  --export <file> | -e   Export the results to a specified file
+  --help | -h   Show this help message
     `,
 
     code: `Code related commands

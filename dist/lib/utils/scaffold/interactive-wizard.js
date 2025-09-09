@@ -1,6 +1,18 @@
 import { askUser } from "../common/askUser.js";
+/**
+ * Runs an interactive wizard to create a folder structure.
+ * The wizard asks the user to create directories or files,
+ * and to enter the content of the files.
+ * The user can quit at any level.
+ * @return The created folder structure as a JSON object.
+ */
 export async function runInteractiveWizard() {
     const root = {};
+    /**
+     * Recursively adds items to the current folder structure.
+     * @param current The current folder structure.
+     * @param level The level of indentation.
+     */
     async function addItems(current, level = 0) {
         while (true) {
             const indent = "  ".repeat(level);

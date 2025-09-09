@@ -4,6 +4,13 @@ import { getFolderSize } from "./fileUtils.js";
 
 const require = createRequire(import.meta.url);
 
+/**
+ * Recursively calculate the size of a dependency and all its sub dependencies.
+ * @param modulePath - The path to the dependency
+ * @param cache - A cache to store the results in
+ * @param depth - The current recursion depth. Defaults to 0
+ * @param maxDepth - The maximum recursion depth. Defaults to 2
+ */
 export async function collectDepSizes(
   modulePath: string,
   cache: Map<string, { size: number; deps: Record<string, any> }>,
@@ -28,6 +35,7 @@ export async function collectDepSizes(
 
   cache.set(modulePath, result); // Cache early to avoid cycles
 
+  // Try to read the package.json of the dependency
   const pkgPath = path.join(modulePath, "package.json");
   try {
     const pkgRaw = await (
@@ -36,14 +44,16 @@ export async function collectDepSizes(
     const pkg = JSON.parse(pkgRaw);
     const subDeps = Object.keys(pkg.dependencies || {});
 
+    // Iterate over the dependencies of the dependency
     for (const dep of subDeps) {
       let depPath = "";
       try {
+        // Try to resolve the dependency
         depPath = path.dirname(
           require.resolve(`${dep}/package.json`, { paths: [process.cwd()] })
         );
       } catch {
-        // fallback path if resolution fails
+        // If resolution fails, try a fallback path
         const fallback = path.join(modulePath, "node_modules", dep);
         try {
           const stat = await (await import("fs/promises")).stat(fallback);
@@ -56,13 +66,15 @@ export async function collectDepSizes(
       }
 
       if (depPath) {
+        // Recursively calculate the size of the dependency
         deps[dep] = await collectDepSizes(depPath, cache, depth + 1, maxDepth);
       } else {
+        // If the dependency can't be found, set its size to 0
         deps[dep] = { size: 0, deps: {} };
       }
     }
   } catch {
-    // skip if no or invalid package.json
+    // If there is no or an invalid package.json, skip the dependency
   }
 
   return result;

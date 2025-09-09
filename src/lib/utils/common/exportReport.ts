@@ -3,6 +3,14 @@ import path from "path";
 
 type ExportData = Record<string, any>;
 
+/**
+ * Exports the report to a file in the specified format.
+ *
+ * @param stats - A JSON object with the report data.
+ * @param flags - An object with the following properties:
+ *   - `export`: The format to export the report in (json, txt, or md).
+ * @param contributors - A Set containing the contributors to the report.
+ */
 export function exportReport(
   stats: ExportData,
   flags: Record<string, any>,
@@ -12,11 +20,14 @@ export function exportReport(
   const outputDir = "./exported-reports";
   if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
 
+  // Determine which output format to use
   switch (flags.export) {
     case "json": {
+      // Export to JSON
       const outputPath = path.join(outputDir, `${filenameBase}.json`);
       fs.writeFileSync(
         outputPath,
+        // Use JSON.stringify to pretty-print the report
         JSON.stringify(
           { contributors: Array.from(contributors), stats },
           null,
@@ -28,6 +39,7 @@ export function exportReport(
     }
 
     case "txt": {
+      // Export to plain text
       const lines: string[] = [];
       lines.push(`GIT REPORT (${new Date().toDateString()})`);
       lines.push(`Contributors: ${contributors.size}`);
@@ -54,6 +66,7 @@ export function exportReport(
     }
 
     case "md": {
+      // Export to Markdown
       const lines: string[] = [];
       lines.push(`# 🧾 Git Contribution Report\n`);
       lines.push(`- 📅 Since: ${flags.since || "Beginning of repo"}`);
