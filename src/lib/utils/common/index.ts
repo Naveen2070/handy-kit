@@ -4,6 +4,7 @@ import { exportReport } from "./exportReport.js";
 import { renderChart } from "./statusChart.js";
 import { printTemplate, printHelp } from "./templates.js";
 import { limitConcurrency } from "./ConcurrencyLimiter.js";
+import { colorize, colors } from "./colorize.js";
 
 export {
   askUser,
@@ -13,4 +14,6 @@ export {
   renderChart,
   exportReport,
   limitConcurrency,
+  colorize,
+  colors,
 };

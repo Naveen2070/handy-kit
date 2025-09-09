@@ -66,6 +66,15 @@ export const GitCommands = {
                 gitStats(flags);
             },
         },
+        {
+            name: "review",
+            description: "Show a pre-PR review summary",
+            usage: "git review --export <path> --help",
+            run: async (_, flags) => {
+                const { gitReview } = await import("./git-review.js");
+                gitReview(_, flags);
+            },
+        },
     ],
 };
 //# sourceMappingURL=index.js.map

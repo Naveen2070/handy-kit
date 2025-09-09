@@ -77,5 +77,14 @@ export const GitCommands: CommandGroup = {
         gitStats(flags);
       },
     },
+    {
+      name: "review",
+      description: "Show a pre-PR review summary",
+      usage: "git review [--export | -e <path>] [--help | -h]",
+      run: async (_, flags) => {
+        const { gitReview } = await import("./git-review.js");
+        gitReview(_, flags);
+      },
+    },
   ],
 };
