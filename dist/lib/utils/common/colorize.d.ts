@@ -1,12 +1,32 @@
 export declare const colors: {
     reset: string;
+    black: string;
     red: string;
     green: string;
     yellow: string;
     blue: string;
     magenta: string;
     cyan: string;
+    white: string;
+    brightBlack: string;
+    brightRed: string;
+    brightGreen: string;
+    brightYellow: string;
+    brightBlue: string;
+    brightMagenta: string;
+    brightCyan: string;
+    brightWhite: string;
+    bgBlack: string;
+    bgRed: string;
+    bgGreen: string;
+    bgYellow: string;
+    bgBlue: string;
+    bgMagenta: string;
+    bgCyan: string;
+    bgWhite: string;
     bold: string;
+    underline: string;
+    reversed: string;
 };
 export declare function colorize(text: string, color: keyof typeof colors): string;
 //# sourceMappingURL=colorize.d.ts.map

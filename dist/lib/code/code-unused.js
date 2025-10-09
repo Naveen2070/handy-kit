@@ -1,107 +1,12 @@
-import * as fs from "fs";
 import * as path from "path";
 import * as ts from "typescript";
-import { parse as babelParse } from "@babel/parser";
-import { getAllFiles, getExportsBabel, getExportsTS, getImportsBabel, getImportsTS, resolveImportPath, } from "../utils/code/index.js";
+import { getAllFiles, scanFiles } from "../utils/code/index.js";
 import { EXTENSIONS } from "../utils/code/scanner.js";
 // Global caches
 const fileContentCache = new Map();
 const astCache = new Map();
 const exportMap = new Map();
 const usageMap = new Map();
-/**
- * Scans a list of files and extracts information about exports and imports.
- *
- * @param allFiles List of files to scan
- */
-function scanFiles(allFiles) {
-    // Clear previous state
-    fileContentCache.clear();
-    astCache.clear();
-    exportMap.clear();
-    usageMap.clear();
-    // Step 1: Parse files and store ASTs
-    for (const file of allFiles) {
-        const ext = path.extname(file);
-        let code = "";
-        try {
-            code = fs.readFileSync(file, "utf8");
-            fileContentCache.set(file, code);
-        }
-        catch (err) {
-            console.error(`❌ Failed to read file: ${file}`, err);
-            continue;
-        }
-        try {
-            if (ext === ".ts" || ext === ".tsx") {
-                const tsAst = ts.createSourceFile(file, code, ts.ScriptTarget.Latest, true);
-                astCache.set(file, tsAst);
-            }
-            else {
-                const ast = babelParse(code, {
-                    sourceType: "module",
-                    plugins: ["jsx", "classProperties", "dynamicImport", "typescript"],
-                });
-                astCache.set(file, ast);
-            }
-        }
-        catch (err) {
-            console.error(`❌ Failed to parse AST for ${file}`, err);
-        }
-    }
-    // Step 2: Extract Exports
-    for (const [file, ast] of astCache.entries()) {
-        const ext = path.extname(file);
-        let exports = new Map();
-        try {
-            if (ext === ".ts" || ext === ".tsx") {
-                exports = getExportsTS(ast);
-            }
-            else {
-                exports = getExportsBabel(ast);
-            }
-        }
-        catch (err) {
-            console.error(`❌ Failed to extract exports from ${file}`, err);
-        }
-        if (exports.size > 0) {
-            exportMap.set(file, exports);
-        }
-    }
-    // Step 3: Extract Imports AND Re-exports
-    for (const [file, ast] of astCache.entries()) {
-        const ext = path.extname(file);
-        let imports = [];
-        try {
-            if (ext === ".ts" || ext === ".tsx") {
-                imports = getImportsTS(ast);
-            }
-            else {
-                imports = getImportsBabel(ast);
-            }
-        }
-        catch (err) {
-            console.error(`❌ Failed to extract imports from ${file}`, err);
-        }
-        for (const imp of imports) {
-            if (!imp.moduleSpecifier.startsWith(".") &&
-                !imp.moduleSpecifier.startsWith("/")) {
-                continue; // skip node_modules
-            }
-            const resolved = resolveImportPath(imp.moduleSpecifier, file);
-            if (!resolved)
-                continue;
-            const usedSet = usageMap.get(resolved) || new Set();
-            if (imp.importedNames.length === 0) {
-                usedSet.add("*"); // Side-effect import
-            }
-            else {
-                imp.importedNames.forEach((name) => usedSet.add(name));
-            }
-            usageMap.set(resolved, usedSet);
-        }
-    }
-}
 /**
  * Scans all files in a given directory (recursively) and checks for unused
  * exports.
@@ -122,7 +27,7 @@ export function findUnusedExports(rootDir) {
             EXTENSIONS.includes(ext));
     });
     // Scan all files and build a map of exported names to line numbers
-    scanFiles(allFiles);
+    scanFiles(allFiles, fileContentCache, astCache, exportMap, usageMap);
     let hasUnused = false;
     let unusedCount = 0;
     // Iterate over all files and their exported names
@@ -172,7 +77,7 @@ export function findUnusedFiles(rootDir) {
             EXTENSIONS.includes(ext));
     });
     // Populate usageMap
-    scanFiles(allFiles);
+    scanFiles(allFiles, fileContentCache, astCache, exportMap, usageMap);
     const importedFiles = new Set(usageMap.keys());
     const unusedFiles = [];
     // ✅ Include entry points like index.ts as used

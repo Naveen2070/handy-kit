@@ -1,4 +1,4 @@
-import { getAllFiles } from "./scanner.js";
+import { getAllFiles, scanFiles } from "./scanner.js";
 import {
   getImportsBabel,
   getImportsTS,
@@ -8,6 +8,7 @@ import { getExportsBabel, getExportsTS } from "./getExport.js";
 
 export {
   getAllFiles,
+  scanFiles,
   getImportsBabel,
   getImportsTS,
   resolveImportPath,

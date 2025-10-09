@@ -10,13 +10,23 @@ Groups:
   code        Code analysis related commands
 
 Commands:
+  ## License
   handy-kit license gen <type> --author "Name"   Generate an open-source license (Supported: MIT, Apache-2.0, BSD-3-Clause, GPL-3.0, MPL-2.0, Unlicense)
+
+  ## Git
   handy-kit git standup [--days <n>] [--weeks <n>] [--months <n>] [--years <n>] [--author <name>] [--branch <branch>] [--export <path>]
   handy-kit git stats [--since <date>] [--author <name>] [--daily|weekly|monthly] [--metric <commits|added|deleted>] [--export <md|json|txt>]
+
+  ## Scaffold
   handy-kit scaffold dir [--entry <folder>] [--template <name>] [--schema <path>]
+
+  ## Dependencies
   handy-kit deps size [--verbose | -v] [--tree | -t] [--table | -t] [--depth | -d] [--concurrency | -c] [--export | -e]
   handy-kit deps manage [--standard | --upgrade | --minor | --major] [--dry-run]
+
+  ## Code
   handy-kit code unused [--path | -p] [--exports | -e] [--files | -f] [--help | -h]
+  handy-kit code hotpaths [--path | -p] [--top | -t] [--all | -a] [--import-weight | -iw] [--commit-weight | -cw] --help | -h
   `,
 
     license: `Manage open-source licenses
@@ -211,9 +221,11 @@ Options:
 
 Subcommands:
   unused [--path | -p] [--exports | -e] [--files | -f] [--help | -h]  Show unused exports and files
+  hotpaths [--path | -p] [--top | -t] [--all | -a] [--import-weight | -iw] [--commit-weight | -cw] --help | -h   Show hot code paths
 
 Usage:
   handy-kit code unused [--path | -p] [--exports | -e] [--files | -f] [--help | -h]
+  handy-kit code hotpaths [--path | -p] [--top | -t] [--all | -a] [--import-weight | -iw] [--commit-weight | -cw]
   `,
     "code-unused": `Show unused exports and files
 
@@ -224,6 +236,20 @@ Options:
   --path | -p     The path to search for unused exports and files
   --export | -e   Export unused exports and files to a file
   --files | -f    Show unused files
+  --help | -h     Show this help message
+    `,
+    "code-hotpaths": `Show hot code paths
+
+Usage:
+  handy-kit code hotpaths [--path | -p] [--top | -t] [--all | -a] [--import-weight | -iw] [--commit-weight | -cw]
+
+Options:
+  --path | -p     The path to search for hot code paths
+  --top | -t      The number of hot code paths to show (default: 20)
+  --all | -a      Show all hot code paths
+  --import-weight | -iw   The weight to give to imports when computing the hotness score (default: 0.7)
+  --commit-weight | -cw   The weight to give to commits when computing the hotness score (default: 0.3)
+  --export | -e   Export hot code paths to a file
   --help | -h     Show this help message
     `,
   },

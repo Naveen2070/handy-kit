@@ -1,5 +1,5 @@
-import { getAllFiles } from "./scanner.js";
+import { getAllFiles, scanFiles } from "./scanner.js";
 import { getImportsBabel, getImportsTS, resolveImportPath } from "./getImport.js";
 import { getExportsBabel, getExportsTS } from "./getExport.js";
-export { getAllFiles, getImportsBabel, getImportsTS, resolveImportPath, getExportsBabel, getExportsTS, };
+export { getAllFiles, scanFiles, getImportsBabel, getImportsTS, resolveImportPath, getExportsBabel, getExportsTS, };
 //# sourceMappingURL=index.d.ts.map

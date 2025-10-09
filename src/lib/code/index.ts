@@ -1,5 +1,6 @@
 import type { CommandGroup } from "../types/utils.js";
 import { printTemplate } from "../utils/common/templates.js";
+import { findHotPaths } from "./code-hotpaths.js";
 import { findUnusedExports, findUnusedFiles } from "./code-unused.js";
 
 export const CodeCommands: CommandGroup = {
@@ -33,6 +34,36 @@ export const CodeCommands: CommandGroup = {
 
         if (getUnUsedImports) findUnusedFiles(path);
         if (getUnUsedExports) findUnusedExports(path);
+      },
+    },
+    {
+      name: "hotpaths",
+      description: "Show hot code paths",
+      usage:
+        "code hotpaths [--path | -p] [--top | -t] [--all | -a] [--import-weight | -iw] [--commit-weight | -cw] --help | -h",
+      run: (_, flags) => {
+        const help = flags["help"] || flags["h"];
+
+        if (help) {
+          printTemplate("help.code-hotpaths");
+          process.exit(0);
+        }
+        const path = flags.path || flags.p || "src";
+        const all = flags.all || flags.a || false;
+        const top = parseInt(flags.top || flags.t || "20", 10);
+        const importWeight = parseFloat(
+          flags["import-weight"] || flags["iw"] || "0.7"
+        );
+        const commitWeight = parseFloat(
+          flags["commit-weight"] || flags["cw"] || "0.3"
+        );
+
+        findHotPaths(path, {
+          top,
+          all: Boolean(all),
+          importWeight,
+          commitWeight,
+        });
       },
     },
   ],

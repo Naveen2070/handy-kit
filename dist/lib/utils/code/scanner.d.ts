@@ -7,4 +7,10 @@ export declare const EXTENSIONS: string[];
  * @returns {string[]} The list of discovered files
  */
 export declare function getAllFiles(dir: string, extList?: string[], fileList?: string[]): string[];
+/**
+ * Scans a list of files and extracts information about exports and imports.
+ *
+ * @param allFiles List of files to scan
+ */
+export declare function scanFiles(allFiles: string[], fileContentCache: Map<string, string>, astCache: Map<string, any>, exportMap: Map<string, Map<string, number>>, usageMap: Map<string, Set<string>>): void;
 //# sourceMappingURL=scanner.d.ts.map
